@@ -1,0 +1,29 @@
+/* CodePen-style role colors, lifted for the classroom's navy background.
+   Only color changes: character widths and textarea alignment stay identical. */
+.syntax {
+  --syntax-tag: #ffb0a0;
+  --syntax-attribute: #ffe29a;
+  --syntax-string: #b8e6a3;
+  --syntax-selector: #f8b6e4;
+  --syntax-property: #9cddff;
+  --syntax-number: #d7bbff;
+  --syntax-link: #85e6db;
+  --syntax-value: #f4f5fa;
+  --syntax-comment: #b2bed2;
+  --syntax-punctuation: #cbd4e6;
+  color: var(--syntax-value);
+}
+.syntax .tok-tag { color: var(--syntax-tag); }
+.syntax .tok-attr { color: var(--syntax-attribute); }
+.syntax .tok-string { color: var(--syntax-string); }
+.syntax .tok-selector { color: var(--syntax-selector); }
+.syntax .tok-prop { color: var(--syntax-property); }
+.syntax .tok-number, .syntax .tok-color { color: var(--syntax-number); }
+.syntax .tok-link { color: var(--syntax-link); }
+.syntax .tok-value { color: var(--syntax-value); }
+.syntax .tok-comment, .syntax .tok-doctype { color: var(--syntax-comment); }
+.syntax .tok-punctuation { color: var(--syntax-punctuation); }
+.syntax .tok-atrule, .syntax .tok-keyword { color: var(--syntax-selector); }
+.syntax .tok-function { color: var(--syntax-attribute); }
+.syntax .tok-variable, .syntax .tok-entity { color: var(--syntax-number); }
+.syntax span { font-weight: inherit; font-style: normal; text-decoration: none; }

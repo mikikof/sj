@@ -1,0 +1,52 @@
+/* Source references are a small companion to the editor, not another workspace. */
+.code-navigation-popup[hidden] { display: none !important; }
+.code-navigation-popup {
+ position: fixed;
+ z-index: 1510;
+ display: flex;
+ flex-direction: column;
+ box-sizing: border-box;
+ margin: 0;
+ padding: 12px;
+ color: #173047;
+ background: #f4f9ff;
+ border: 2px solid #689ac6;
+ border-radius: 10px;
+ box-shadow: 0 5px 0 #cadeee, 0 10px 28px #17304726;
+ font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+ font-size: 16px;
+ line-height: 1.5;
+ text-align: left;
+}
+.code-navigation-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex: 0 0 auto; margin-bottom: 10px; }
+.code-navigation-heading h2 { margin: 0; font-size: 18px; font-weight: 750; line-height: 1.4; }
+.code-navigation-close { flex: 0 0 32px; height: 32px; padding: 0; border: 1px solid #91b0cb; border-radius: 6px; color: #173047; background: #fff; font: inherit; font-size: 24px; line-height: 1; cursor: pointer; }
+.code-navigation-list { display: flex; flex-direction: column; gap: 8px; min-height: 0; max-height: min(340px, 58vh); overflow-y: auto; overscroll-behavior: contain; padding: 3px; margin: -3px; }
+.code-navigation-target { display: flex; flex-direction: column; gap: 4px; width: 100%; padding: 10px 12px; border: 1px solid #9fb9d0; border-radius: 6px; background: #fff; color: #173047; font: inherit; text-align: left; cursor: pointer; overflow-wrap: anywhere; }
+.code-navigation-target:hover { background: #e8f3ff; border-color: #4c88b9; }
+.code-navigation-target:focus-visible, .code-navigation-close:focus-visible, .code-navigation-hint:focus-visible { outline: 3px solid #1674bc; outline-offset: 2px; }
+.code-navigation-target-heading { display: flex; align-items: baseline; gap: 6px 12px; flex-wrap: wrap; }
+.code-navigation-line { flex: 0 0 auto; color: #315877; font-size: 16px; font-weight: 700; }
+.code-navigation-label { color: #153c60; font-size: 17px; font-weight: 700; }
+.code-navigation-label, .code-navigation-snippet { font-family: var(--mono), "Hiragino Kaku Gothic ProN", "Yu Gothic", monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+.code-navigation-snippet { color: #334a60; font-size: 16px; }
+.code-navigation-detail { color: #3f566b; font-size: 16px; }
+.code-navigation-keys { flex: 0 0 auto; margin: 10px 0 0; color: #3e5870; font-size: 16px; }
+.editor-foot .code-navigation-hint { flex: 0 0 auto; min-height: 25px; margin: 0; padding: 0 4px; color: #e1efff; background: #2a4160; border: 1px solid #6c8fb5; border-radius: 4px; font: inherit; font-size: 16px; line-height: 1.4; white-space: nowrap; cursor: pointer; }
+.editor-foot .code-navigation-hint:hover { color: #fff; background: #375b80; border-color: #a4d4ff; }
+.editor-foot .code-navigation-hint:focus-visible { outline-color: #a4d4ff; }
+.editor-foot [data-code-help-hint] { flex: 0 1 auto; }
+#html-position, #css-position { flex: 1 1 0; }
+#html-section, #css-section { container-type: inline-size; }
+@container (max-width: 520px) {
+ .editor-foot #html-match { display: none; }
+}
+@container (max-width: 420px) {
+ .editor-foot #html-position, .editor-foot #css-position { display: none; }
+}
+@media (max-height: 550px) {
+ .code-navigation-popup { padding: 9px; }
+ .code-navigation-heading { margin-bottom: 7px; }
+ .code-navigation-target { padding: 8px 10px; }
+ .code-navigation-keys { margin-top: 7px; }
+}

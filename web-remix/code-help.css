@@ -1,0 +1,39 @@
+/* The explanation and token marker never take space or receive pointer input. */
+.code-help-tooltip, .code-help-token { position: fixed; pointer-events: none; box-sizing: border-box; }
+.code-help-tooltip[hidden], .code-help-token[hidden] { display: none !important; }
+.code-help-tooltip {
+ z-index: 1500;
+ width: 400px;
+ margin: 0;
+ padding: 16px 18px 12px;
+ overflow: hidden;
+ color: #15243a;
+ background: #fff;
+ border: 2px solid #72a8d9;
+ border-radius: 10px;
+ box-shadow: 0 6px 0 #d3e6f6, 0 12px 30px #102b4926;
+ font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+ font-size: 16px;
+ font-weight: 500;
+ line-height: 1.55;
+ text-align: left;
+ overflow-wrap: anywhere;
+}
+.code-help-heading { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; margin-bottom: 11px; }
+.code-help-kind { color: #315b7f; font-size: 14px; font-weight: 700; }
+.code-help-label { display: block; max-width: 100%; max-height: 54px; overflow: hidden; color: #133660; font-family: var(--mono), "Hiragino Kaku Gothic ProN", "Yu Gothic", monospace; font-size: 18px; font-weight: 700; line-height: 1.5; white-space: pre-wrap; }
+.code-help-description { display: grid; grid-template-columns: 1fr; gap: 3px; margin: 0; }
+.code-help-description dt { margin: 0; color: #254d71; font-size: 14px; font-weight: 750; }
+.code-help-description dd { margin: 0 0 9px; }
+.code-help-description dd:last-child { margin-bottom: 0; }
+.code-help-example { margin: 10px 0 0; padding: 8px 10px; background: #edf5fc; border-radius: 4px; color: #173958; font-size: 15px; }
+.code-help-release { margin: 10px 0 0; padding-top: 8px; border-top: 1px solid #d3e2ed; color: #4a6074; font-size: 13px; }
+.code-help-token { z-index: 1490; background: #75c4ff20; border: 2px solid #8ed8ff; border-radius: 3px; box-shadow: 0 0 0 1px #10244080; }
+[data-code-help-hint] { color: #c0d6ef; white-space: nowrap; flex-shrink: 0; }
+#html-match { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-height: 550px) {
+ .code-help-tooltip { padding: 10px 14px; font-size: 15px; line-height: 1.4; }
+ .code-help-heading { margin-bottom: 6px; }
+ .code-help-description dd { margin-bottom: 5px; }
+ .code-help-example, .code-help-release { margin-top: 6px; }
+}

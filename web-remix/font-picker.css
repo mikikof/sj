@@ -1,0 +1,66 @@
+@charset "UTF-8";
+.font-picker { position: fixed; z-index: 91; display: flex; flex-direction: column; box-sizing: border-box; min-width: 0; max-width: calc(100vw - 20px); max-height: calc(100dvh - 20px); padding: 0; overflow: hidden; color: #172b4d; background: #f3f9ff; border: 2px solid #7398ba; border-radius: 7px; box-shadow: 0 8px 28px #183c6430; font-family: inherit; }
+.font-picker[hidden], .font-picker [hidden] { display: none !important; }
+.font-picker * { box-sizing: border-box; }
+.font-picker button, .font-picker input, .font-picker select { font-family: inherit; font-size: 16px; line-height: 1.4; color: #172b4d; }
+.font-picker button { cursor: pointer; }
+.font-picker button:focus-visible, .font-picker input:focus-visible, .font-picker select:focus-visible, .font-picker textarea:focus-visible { outline: 3px solid #216fa9; outline-offset: 2px; }
+.font-heading { flex: 0 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 1px solid #bfd3e6; background: #fff; }
+.font-heading h2 { margin: 0; font-size: 20px; line-height: 1.4; }
+#font-count { margin-left: 4px; font-size: 16px; color: #355c7b; white-space: nowrap; }
+#font-close { flex: 0 0 auto; min-height: 34px; padding: 4px 8px; border: 1px solid #a9c2d9; border-radius: 4px; background: #fff; white-space: nowrap; }
+.font-controls { flex: 0 0 auto; padding: 9px 12px 7px; }
+.font-filter-row, .font-sample-row { display: flex; align-items: center; gap: 10px; }
+.font-languages { flex: 0 0 auto; display: flex; padding: 2px; border: 1px solid #a9c2d9; border-radius: 5px; background: #fff; }
+.font-languages button { min-height: 31px; padding: 3px 14px; border: 0; border-radius: 3px; background: transparent; font-weight: 700; }
+.font-languages button[aria-pressed="true"] { color: #fff; background: #1b5686; }
+#font-category { flex: 1 1 0; min-width: 0; min-height: 36px; padding: 4px 7px; border: 1px solid #91b1ce; border-radius: 4px; background: #fff; }
+.font-sample-row { margin-top: 7px; font-size: 16px; font-weight: 600; }
+.font-sample-row > span { flex: 0 0 auto; }
+#font-sample { flex: 1 1 0; min-width: 0; width: 0; min-height: 34px; padding: 4px 8px; border: 1px solid #91b1ce; border-radius: 4px; background: #fff; }
+#font-language-note { margin: 5px 0 0; font-size: 16px; line-height: 1.4; color: #31536e; }
+.font-list { flex: 1 1 220px; min-height: 104px; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); align-content: start; gap: 8px; overflow: auto; overscroll-behavior: contain; scrollbar-gutter: stable; padding: 4px 12px 12px; }
+.font-card { display: flex; flex-direction: column; align-items: stretch; min-width: 0; min-height: 97px; padding: 8px 10px 6px; text-align: left; border: 2px solid #bdcfe0; border-radius: 5px; background: #fff; }
+.font-card:hover { border-color: #629ac7; background: #eff8ff; }
+.font-card[aria-pressed="true"] { border-color: #1b5686; background: #e7f3ff; box-shadow: inset 0 0 0 1px #1b5686; }
+.font-card-name { font-size: 16px; line-height: 1.3; font-weight: 700; overflow-wrap: anywhere; }
+.font-card-sample { display: block; min-width: 0; min-height: 37px; padding-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #142c43; font-size: 23px; line-height: 1.5; font-weight: 400; font-style: normal; }
+.font-card-type { margin-top: 1px; color: #3e617d; font-size: 16px; line-height: 1.3; }
+.font-bottom { flex: 0 0 auto; padding: 8px 12px 9px; border-top: 1px solid #afc9df; background: #fff; }
+.font-selected { display: flex; align-items: baseline; flex-wrap: wrap; gap: 2px 8px; margin-bottom: 7px; line-height: 1.4; }
+#font-chosen-name { font-size: 17px; color: #163e60; }
+#font-description { font-size: 16px; color: #31536e; }
+.font-target-row { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 600; }
+.font-target-row > span { flex: 0 0 auto; }
+#font-target { flex: 1 1 0; min-width: 0; min-height: 34px; padding: 4px 7px; border: 1px solid #91b1ce; border-radius: 4px; background: #fff; }
+#font-target-note { margin: 4px 0 6px; color: #31536e; font-size: 16px; line-height: 1.4; }
+#font-code { display: block; width: 100%; height: 96px; min-height: 96px; padding: 7px 9px; resize: none; overflow: auto; white-space: pre; border: 1px solid #a1bed6; border-radius: 4px; color: #173c5b; background: #f2f8ff; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 16px; line-height: 20px; }
+.font-copy-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 8px; }
+.font-copy-row button { min-height: 39px; padding: 6px 10px; border-radius: 4px; }
+#font-paste-place { border: 1px solid #a3c0d7; background: #fff; }
+#font-copy { border: 1px solid #1b5686; color: #fff; background: #1b5686; font-size: 17px; font-weight: 700; }
+#font-copy:hover { background: #103e65; }
+#font-status { margin: 6px 0 0; color: #254b6a; font-size: 16px; line-height: 1.4; }
+@media (max-height: 650px) {
+  .font-heading { padding-block: 5px; }
+  .font-controls { padding-block: 5px; }
+  .font-bottom { padding-block: 6px; }
+  .font-selected { margin-bottom: 4px; }
+  #font-code { height: 80px; min-height: 80px; padding-top: 1px; }
+  .font-list { min-height: 83px; gap: 6px; }
+  .font-card { min-height: 83px; padding: 5px 7px; }
+  .font-card-sample { font-size: 21px; min-height: 32px; }
+  .font-copy-row { margin-top: 5px; }
+  #font-status { margin-top: 4px; }
+}
+@media (max-width: 470px) {
+  .font-heading h2 { font-size: 18px; }
+  #font-count { display: none; }
+  .font-heading, .font-controls, .font-bottom { padding-inline: 9px; }
+  .font-list { padding-inline: 9px; gap: 6px; }
+  .font-card-sample { font-size: 21px; }
+  .font-languages button { padding-inline: 10px; }
+  .font-copy-row button { font-size: 16px; padding-inline: 8px; }
+  #font-description { display: none; }
+}
+@media (max-height: 580px) { .font-picker { overflow: auto; } .font-list { flex: 0 0 165px; } }

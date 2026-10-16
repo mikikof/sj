@@ -1,0 +1,71 @@
+@charset "UTF-8";
+/* The code stays on the left while character parts are chosen on the right. */
+.preview-area { position: relative; }
+.character-studio { position: absolute; inset: 0; z-index: 12; min-width: 0; min-height: 0; display: flex; flex-direction: column; background: #f5faff; color: #18364b; border: 2px solid #82b6dc; border-radius: 5px; overflow: hidden; }
+.character-studio[hidden], .character-studio [hidden] { display: none !important; }
+.character-studio button, .character-studio input { font: inherit; }
+.character-studio button:focus-visible, .character-studio input:focus-visible { outline: 3px solid #24699d; outline-offset: 2px; }
+.studio-heading { flex: 0 0 auto; min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 10px; background: white; border-bottom: 1px solid #bad1e3; }
+.studio-heading h2 { font-size: 19px; line-height: 1.4; margin: 0; white-space: nowrap; }
+.studio-heading button { padding: 5px 8px; min-height: 36px; font-size: 16px; white-space: nowrap; }
+.studio-edit { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; overflow: auto; overscroll-behavior: contain; }
+.studio-preview { flex: 1 1 115px; min-height: 90px; display: flex; justify-content: center; align-items: center; gap: 16px; padding: 3px 12px; background-image: linear-gradient(#c9dfef45 1px, transparent 1px), linear-gradient(90deg,#c9dfef45 1px,transparent 1px); background-size: 20px 20px; }
+#studio-image { width: 118px; height: 118px; max-height: 100%; object-fit: contain; image-rendering: pixelated; flex: 0 0 auto; filter: var(--studio-filter,none); transform: var(--studio-transform,none); }
+.studio-preview strong { font-size: 20px; }
+.studio-preview p { margin: 4px 0 0; font-size: 18px; line-height: 1.45; }
+.studio-preview p.studio-note { font-size: 16px; color: #365b75; }
+.studio-tabs { display: flex; flex: 0 0 auto; gap: 4px; padding: 5px 10px 0; background: #e8f3fc; border-top: 1px solid #c4d9e8; }
+.studio-tabs button { flex: 1 1 0; min-width: 0; min-height: 38px; padding: 4px 6px; font-size: 18px; line-height: 1.4; font-weight: 700; background: transparent; color: #34556f; border: 1px solid transparent; border-bottom: 0; border-radius: 5px 5px 0 0; }
+.studio-tabs button[aria-selected="true"] { color: #124b78; background: white; border-color: #9dbed7; box-shadow: inset 0 3px 0 #2d73a5; }
+.studio-options { flex: 0 0 auto; min-height: 118px; padding: 9px 10px; background: white; }
+.studio-part-options { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 6px; }
+.studio-part-options button { min-width: 0; min-height: 96px; display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 3px 2px 6px; border: 2px solid #c1d5e3; border-radius: 4px; color: #18364b; background: #f7fbfe; }
+.studio-part-options button[aria-pressed="true"] { border-color: #286b9c; background: #e1f1fd; box-shadow: inset 0 -3px 0 #286b9c; }
+.studio-part-options button:hover { background: #e9f5ff; }
+.studio-part-options img { width: 62px; height: 62px; object-fit: contain; image-rendering: pixelated; filter: var(--studio-filter,none); transform: var(--studio-transform,none); }
+.studio-part-options span { font-size: 16px; line-height: 1.35; font-weight: 700; text-align: center; }
+.studio-colors { display: flex; flex-direction: column; justify-content: center; gap: 9px; min-height: 100px; }
+.studio-color-row { display: flex; align-items: center; gap: 9px; }
+.studio-color-row > label { flex: 0 0 96px; font-size: 18px; font-weight: 700; }
+.studio-color-picker { display: flex; align-items: center; gap: 7px; }
+.studio-color-picker input[type="color"] { width: 43px; height: 38px; border: 1px solid #6f97b5; border-radius: 3px; padding: 2px; background: white; cursor: pointer; }
+.studio-color-picker code { font-size: 16px; color: #18364b; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.studio-swatches { margin-left: auto; display: flex; gap: 5px; }
+.studio-swatches button { flex: 0 0 auto; width: 30px; min-width: 0; height: 30px; min-height: 0; padding: 0; border: 2px solid #7d9eb8; border-radius: 3px; background: var(--studio-swatch); }
+.studio-swatches button[aria-pressed="true"] { outline: 2px solid #123c5a; outline-offset: 2px; }
+.studio-footer { flex: 0 0 auto; min-height: 45px; padding: 5px 10px; border-top: 1px solid #bad1e3; background: #eef7fe; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2px 8px; }
+.studio-footer p { margin: 0; min-width: 0; color: #234a66; font-size: 16px; line-height: 1.5; overflow-wrap: anywhere; }
+.studio-footer button { font-size: 16px; padding: 3px 4px; min-height: 32px; white-space: nowrap; }
+.studio-custom { flex: 1 1 0; min-height: 0; display: flex; align-items: center; justify-content: center; gap: 14px; padding: 14px; overflow: auto; }
+.studio-custom > img { width: 100px; height: 100px; object-fit: contain; }
+.studio-custom p, .studio-empty p { font-size: 18px; line-height: 1.6; margin: 0 0 10px; }
+.studio-custom button { min-height: 42px; font-size: 17px; }
+.studio-empty { flex: 1 1 0; min-height: 0; overflow: auto; padding: 20px; }
+body.selecting .character-studio { display: none; }
+@media (max-width: 1150px) {
+ .studio-color-row { gap: 6px; }
+ .studio-color-row > label { flex-basis: 86px; font-size: 16px; }
+ .studio-swatches { gap: 4px; }
+ .studio-swatches button { width: 25px; height: 28px; }
+ .studio-color-picker { gap: 5px; }
+ .studio-color-picker input[type="color"] { width: 36px; }
+ .studio-preview { gap: 10px; }
+ .studio-preview p { font-size: 16px; }
+}
+@media (max-width: 900px) {
+ .studio-preview .studio-note { display: none; }
+ .studio-color-row { flex-wrap: wrap; }
+ .studio-color-row > label { flex-basis: 80px; }
+ .studio-swatches { margin-left: 0; }
+ .studio-preview { min-height: 80px; }
+ #studio-image { width: 96px; height: 96px; }
+}
+@media (max-height: 740px) and (min-width: 901px) {
+ .studio-preview { flex-basis: 90px; min-height: 82px; }
+ #studio-image { width: 96px; height: 96px; }
+ .studio-preview .studio-note { display: none; }
+ .studio-part-options button { min-height: 88px; }
+ .studio-part-options img { width: 56px; height: 56px; }
+ .studio-options { min-height: 108px; padding-block: 6px; }
+ .studio-colors { min-height: 96px; gap: 6px; }
+}

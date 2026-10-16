@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 32 32" shape-rendering="crispEdges" role="img" aria-labelledby="title desc">
+<title id="title">アクア</title>
+<desc id="desc">青い背びれと水色のからだ、白いおなかを持つ水辺のキャラクター。黄色い首飾りをつけている。</desc>
+<path d="M15 2h3v3h3v2h3v3h2v7h2v-3h3v7h-2v3h-5v3h-2v3h-6v-2h-2v2H8v-3H6v-4H4v-5H2v-5h4V9h2V7h4V5h3Z" fill="#17233c"/>
+<path d="M16 3h1v3h3v2h-6V6h2Z" fill="#3b8bbd"/>
+<path d="M9 8h14v3h2v10h-3v5h-2v2h-4v-2h-3v2H9v-3H7v-4H5v-4H4v-3h3V10h2Z" fill="#70cdeb"/>
+<path d="M10 9h11v1H11v2H9v7H8V11h2Z" fill="#b7eff9"/>
+<path d="M23 11h2v11h-3v4h-2v2h-4v-1h3v-3h2v-4h2Z" fill="#399fc9"/>
+<path d="M25 18h3v-3h2v5h-2v3h-4v-2h1Z" fill="#2b8cbc"/>
+<rect x="27" y="19" width="2" height="2" fill="#70cdeb"/>
+<path d="M12 18h7v1h2v4h-2v2h-6v-1h-2v-4h1Z" fill="#e8f8fb"/>
+<rect x="11" y="13" width="2" height="4" fill="#17233c"/><rect x="19" y="13" width="2" height="4" fill="#17233c"/>
+<rect x="11" y="13" width="1" height="1" fill="#fff"/><rect x="19" y="13" width="1" height="1" fill="#fff"/>
+<rect x="15" y="17" width="2" height="1" fill="#17233c"/>
+<rect x="9" y="17" width="2" height="1" fill="#3ca5d1"/><rect x="21" y="17" width="2" height="1" fill="#3ca5d1"/>
+<path d="M9 20h4v1h6v-1h3v2h-3v1h-7v-1H9Z" fill="#e2ac3d"/>
+<rect x="14" y="21" width="3" height="2" fill="#ffe894"/>
+<rect x="9" y="27" width="4" height="2" fill="#37739e"/><rect x="17" y="27" width="4" height="2" fill="#2e5e88"/>
+</svg>

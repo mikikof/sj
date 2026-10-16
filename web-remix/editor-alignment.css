@@ -1,0 +1,68 @@
+/* The text, caret, selection, gutter and row marker share one set of metrics. */
+.code-input {
+  grid-template-rows: minmax(0,1fr);
+  --code-font-size: 18px;
+  --code-line-height: 30px;
+  --code-pad-block: 15px;
+  --code-pad-start: 13px;
+  --code-pad-end: 18px;
+  background: linear-gradient(to right, #18223b 0 52px, var(--navy) 52px 100%);
+}
+.line-numbers, .syntax, .code-editor {
+  box-sizing: border-box;
+  font-family: var(--mono), "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo;
+  font-size: var(--code-font-size);
+  line-height: var(--code-line-height);
+  font-weight: 500;
+  font-style: normal;
+  font-kerning: none;
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "calt" 0;
+  letter-spacing: 0;
+  word-spacing: 0;
+  text-indent: 0;
+  text-transform: none;
+  text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  tab-size: 2;
+  white-space: pre;
+  overflow-wrap: normal;
+  word-break: normal;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+.syntax, .code-editor {
+  padding: var(--code-pad-block) var(--code-pad-end) var(--code-pad-block) var(--code-pad-start);
+  text-align: left;
+}
+.code-editor {
+  appearance: none;
+  -webkit-appearance: none;
+}
+.syntax {
+  inset: 0 auto auto 0;
+  width: max-content;
+  min-width: 100%;
+  height: auto;
+  min-height: 100%;
+  overflow: visible;
+  transform-origin: 0 0;
+}
+.syntax span { font: inherit; letter-spacing: inherit; }
+.line-numbers {
+  align-self: start;
+  width: 52px;
+  height: auto;
+  min-height: 100%;
+  padding: var(--code-pad-block) 10px var(--code-pad-block) 0;
+  text-align: right;
+  overflow: visible;
+  border-right: 1px solid #35405b70;
+  transform-origin: 0 0;
+}
+.code-line-glow { top: var(--code-pad-block); height: var(--code-line-height); }
+@media (max-width: 640px) {
+  .code-input { grid-template-columns: 48px minmax(0,1fr); background: linear-gradient(to right, #18223b 0 48px, var(--navy) 48px 100%); }
+  .line-numbers { width: 48px; }
+}
