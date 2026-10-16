@@ -134,7 +134,7 @@
    });
    listen(editor,'pointercancel',()=>{gesture=null;});
    listen(editor,'click',event=>{
-    const request=gesture;gesture=null;if(!request||request.editor!==editor||!plainShift(event)||!primary(event))return;
+    const request=gesture;gesture=null;if(!request||request.editor!==editor||!plainShift(event)||event.button!==0||event.pointerType==='touch')return; /* click の isPrimary は Chrome で false になるので見ない（押し下げの時点で primary を確かめ済み。2026-10-16） */
     if(Math.hypot(event.clientX-request.x,event.clientY-request.y)>7)return;
     if(request.targets.length){event.preventDefault();event.stopPropagation();}show(request);
    });
