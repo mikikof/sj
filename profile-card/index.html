@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="品川女子学院 中学1年生のための、CodePenとGeminiでつくる自己紹介カード。編集の手順をたどる体験ガイド。">
+<title>自己紹介カードをつくる｜品川女子学院</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%228%22 fill=%22%231f4a7d%22/%3E%3Cpath d=%22M12 10l-6 6 6 6M20 10l6 6-6 6%22 stroke=%22white%22 stroke-width=%223%22 fill=%22none%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E">
+<link rel="stylesheet" href="app.css?v=5">
+</head>
+<body>
+<header class="site-header">
+  <a href="#step-1" class="brand" aria-label="はじめの画面へ"><span class="brand-mark" aria-hidden="true">&lt;/&gt;</span><span><b>自己紹介カードをつくる</b><small>品川女子学院 · 中学1年生</small></span></a>
+  <div class="header-actions"><a href="https://codepen.io/pen/" target="_blank" rel="noopener noreferrer" class="tool-link"><span class="tool-dot pen" aria-hidden="true"></span>CodePen <span aria-hidden="true">↗</span></a><a href="https://gemini.google.com/" target="_blank" rel="noopener noreferrer" class="tool-link"><span class="tool-dot ai" aria-hidden="true"></span>Gemini <span aria-hidden="true">↗</span></a><button class="quiet" id="help-open">困ったとき</button><button class="icon-button" id="teacher-open" aria-label="先生用の進行メモ" title="先生用の進行メモ">進行メモ</button></div>
+</header>
+<nav class="steps" aria-label="授業の流れ">
+<button data-step="0"><span class="step-dot">1</span><span class="step-text"><b>準備する</b><small class="step-count" data-count="0"></small></span></button>
+<button data-step="1"><span class="step-dot">2</span><span class="step-text"><b>コードを貼る</b><small class="step-count" data-count="1"></small></span></button>
+<button data-step="2"><span class="step-dot">3</span><span class="step-text"><b>AIに頼む</b><small class="step-count" data-count="2"></small></span></button>
+</nav>
+<main id="main">
+
+<section class="stage" data-panel="0" aria-labelledby="title-0">
+ <div class="two-col intro-grid">
+  <div class="intro-copy">
+   <p class="eyebrow">CodePen × Gemini</p>
+   <h1 id="title-0" tabindex="-1">自己紹介カードを、<br>自分のデザインに。</h1>
+   <div class="goal-card">
+    <p class="goal-label">きょうのゴール</p>
+    <p class="goal-text">CodePenに、<mark>自分だけの自己紹介カード</mark>をつくる。</p>
+    <ol class="mission-list">
+     <li><span class="mission-no">1</span><span><b>見本のカードを貼る</b><small>02 コードを貼る</small></span></li>
+     <li><span class="mission-no">2</span><span><b>中身を自分のことに書き換える</b><small>02 コードを貼る</small></span></li>
+     <li><span class="mission-no">3</span><span><b>Geminiに頼んで、見た目を2か所以上変える</b><small>03 AIに頼む</small></span></li>
+    </ol>
+   </div>
+   <div class="todo-card">
+    <p class="todo-title">この画面でやること</p>
+    <label class="todo"><input type="checkbox" data-check="s1-account"><span><b>CodePenのアカウントをつくる</b><small>すでにある人は、✓を付けて次へ。</small></span></label>
+    <a id="signup-link" class="primary signup-button" href="https://codepen.io/accounts/signup/user/free" target="_blank" rel="noopener noreferrer">CodePenのアカウントを作成しよう <span aria-hidden="true">↗</span></a>
+    <label class="todo"><input type="checkbox" data-check="s1-open"><span><b>CodePenで、新しいPenを開く</b><small>「HTML」「CSS」「JS」の3つの欄がある画面になればOK。</small></span></label>
+    <a class="secondary compact" href="https://codepen.io/pen/" target="_blank" rel="noopener noreferrer">CodePenを開く <span aria-hidden="true">↗</span></a>
+    <label class="todo"><input type="checkbox" data-check="s1-compare"><span><b>右の見本で「CSSあり／なし」を切り替える</b><small>内容は同じ。見た目だけが変わるのを確かめる。</small></span></label>
+   </div>
+   <div class="concepts"><div><b>HTML</b><span>何を書くか</span></div><div><b>CSS</b><span>どう見せるか</span></div></div>
+   <p class="safe-note">名前はイニシャルや仮の名前でOK。本名・顔写真・住所は書かない。</p>
+   <button class="primary" data-go="1">コードを貼る <span aria-hidden="true">→</span></button>
+  </div>
+  <div class="preview-block sticky"><div class="block-heading"><span>完成見本</span><div class="segmented" aria-label="見本のCSS"><button id="styled-on" aria-pressed="true">CSSあり</button><button id="styled-off" aria-pressed="false">CSSなし</button></div></div><iframe id="intro-preview" title="自己紹介カードの完成見本" sandbox=""></iframe><p class="caption" id="style-caption">内容は同じ。CSSが色・文字の大きさ・配置を決めています。</p></div>
+ </div>
+</section>
+
+<section class="stage" data-panel="1" aria-labelledby="title-1" hidden>
+ <div class="stage-title"><div><p class="eyebrow">02 / コードを貼る</p><h1 id="title-1" tabindex="-1">2つのコードを、2つの欄へ。</h1><p class="stage-lead">貼って見本と同じになったら、中身を自分のことに書き換える。</p></div><a href="https://codepen.io/pen/" target="_blank" rel="noopener noreferrer" class="primary">CodePenを開く ↗</a></div>
+ <div class="todo-card todo-row">
+  <p class="todo-title">この画面でやること</p>
+  <div class="todo-grid">
+   <label class="todo"><input type="checkbox" data-check="s2-html"><span><b>① HTMLを、HTML欄に貼る</b><small>左の「HTMLをコピー」→ CodePenのHTML欄へ</small></span></label>
+   <label class="todo"><input type="checkbox" data-check="s2-css"><span><b>② CSSを、CSS欄に貼る</b><small>「② CSS」に切り替えてコピー → CSS欄へ</small></span></label>
+   <label class="todo"><input type="checkbox" data-check="s2-same"><span><b>③ 見本と同じ見た目になった</b><small>右の「こうなればOK」と見比べる</small></span></label>
+   <label class="todo"><input type="checkbox" data-check="s2-edit"><span><b>④ 中身を自分のことに書き換えた</b><small>下の「書き換えるところ」を全部</small></span></label>
+  </div>
+ </div>
+ <div class="two-col work-grid">
+ <div class="code-card"><div class="code-tabs" role="tablist" aria-label="コピーするコード"><button id="html-tab" role="tab" aria-selected="true" aria-controls="starter-code" data-code="html">① HTML <small>内容</small></button><button id="css-tab" role="tab" aria-selected="false" aria-controls="starter-code" data-code="css">② CSS <small>見た目</small></button><button id="copy-starter" class="primary compact">HTMLをコピー</button></div><p id="paste-target" class="code-hint">CodePenの「HTML」欄へ、下のコードを全部貼り付ける。</p><textarea id="starter-code" class="code-text" readonly spellcheck="false" aria-label="コピー用HTMLコード"></textarea><div class="code-footer"><span id="copy-progress">HTMLとCSSを、それぞれコピーしよう。</span><button class="text-button" id="select-starter">全文を選択</button></div></div>
+ <div class="preview-block"><div class="block-heading"><span>こうなればOK</span><span class="sub-label">内容は編集用の見本</span></div><iframe id="copy-preview" title="貼り付け後の完成見本" sandbox=""></iframe><p class="caption">HTMLは内容、CSSは見た目。コメントの「ここを変える」を目印にしよう。</p></div>
+ </div>
+ <div class="rewrite-card">
+  <div><p class="mini-label">④ 書き換えるところ（HTML欄）</p><h2>「ここを変える」の、次の行の文字だけを書き換える。</h2><p class="muted">タグ（<code>&lt;h1&gt;</code> など）や記号は消さない。変えるのは、タグにはさまれた文字だけ。</p></div>
+  <ul class="field-chips" aria-label="書き換える項目">
+   <li>名前<small>イニシャル・仮の名前</small></li><li>アイコンの文字<small>2文字くらい</small></li><li>クラス</li><li>出席番号</li><li>部活・委員会</li><li>MBTI</li><li>推し</li><li>好きなこと</li><li>なりたい職業</li><li>最近のひとこと</li>
+  </ul>
+  <p class="small muted">項目名（「推し」など）も、自分の好きな話題に変えてよい。</p>
+ </div>
+ <details class="inline-help"><summary>貼る場所がわからない／画面が違う</summary><p>「HTML」「CSS」「JS」の3つの欄がある画面を使います。上の「CodePenを開く」から開き直してください。HTMLとCSSをそれぞれ同じ名前の欄に貼り、JSは空のままで進めます。新しい画面の「index.html」が表示されたら、先生と一緒に確認しましょう。</p></details>
+</section>
+
+<section class="stage" data-panel="2" aria-labelledby="title-2" hidden>
+ <div class="stage-title"><div><p class="eyebrow">03 / AIに頼む</p><h1 id="title-2" tabindex="-1">変えたい場所を、言葉で伝える。</h1><p class="stage-lead"><b>ミッション：</b>Geminiに頼んで、見た目を<b>2か所以上</b>変える。1回に、1つの変更から。</p></div><div class="count-badge" aria-live="polite"><small>Geminiに頼んだ回数</small><b><span id="sent-count">0</span>回</b><small>目標 2回</small></div></div>
+ <div class="ai-nav" role="tablist" aria-label="Geminiで編集する手順"><button role="tab" data-ai="0" aria-selected="true"><span class="ai-no">1</span>いまのコードを入れる</button><button role="tab" data-ai="1" aria-selected="false"><span class="ai-no">2</span>指示文をつくって送る</button><button role="tab" data-ai="2" aria-selected="false"><span class="ai-no">3</span>CodePenへ戻して確かめる</button></div>
+ <div data-ai-panel="0" class="ai-panel"><div class="two-col ai-code-grid"><div><p class="section-lead">CodePenのHTMLとCSSを、こちらにコピー。</p><p class="muted">自分で変えた文字も、Geminiに渡すためです。2回目は最新のコードに入れ替えます。</p><div class="input-code-tabs"><button data-current="html" aria-pressed="true">HTML</button><button data-current="css" aria-pressed="false">CSS</button><span id="code-paste-state" class="small">まだ入力していません</span></div><label class="sr-only" for="current-code">いまCodePenにあるHTML</label><textarea id="current-code" class="code-text current-code" spellcheck="false" placeholder="CodePenのHTML欄をクリック → 全部選択 → コピー → ここに貼る"></textarea><div class="row spaced"><button id="use-starter" class="text-button">まだ編集していないので、見本を使う</button><button class="primary compact" id="code-next">指示文へ →</button></div></div><aside class="explain-card"><div class="mini-label">コピーのしかた</div><h2>欄の中をクリックしてから、<br>全部選択する。</h2><ol class="short-list"><li>CodePenのHTML欄をクリック</li><li><kbd>⌘</kbd>＋<kbd>A</kbd> で全部選択</li><li><kbd>⌘</kbd>＋<kbd>C</kbd> でコピー</li><li>こちらのHTML欄に貼る</li></ol><p>CSSも同じようにコピーします。</p><p class="small muted">Windowsは⌘の代わりにCtrl。</p><p class="small muted">コードはこの端末のブラウザに保存します。Geminiへは自分で貼り付けます。</p></aside></div></div>
+ <div data-ai-panel="1" class="ai-panel" hidden><div class="two-col prompt-grid"><div><label for="change-request" class="field-label">どこを、どう変えたい？</label><textarea id="change-request" class="request-input" placeholder="例：カードの背景を薄い水色にして。文字の色は読みやすい濃い紺にして。"></textarea><div class="example-label">例から考える <small>クリックで入力</small></div><div class="example-buttons"><button data-example="color">色を変える</button><button data-example="space">余白を広げる</button><button data-example="shape">角を丸くする</button><button data-example="layout">配置を変える</button></div><p class="small muted">例を選んだら、色や場所を自分の好みに書き換えてみよう。</p><div class="soft-note"><b>「おしゃれに」から、もう一歩。</b><p>「背景は白、見出しは紺。余白を広くして、すっきり見せて」のように、<b>どこを</b>・<b>どう</b>を入れて伝えると、確かめやすい。</p></div></div><div class="prompt-card"><div class="block-heading"><span>Geminiに送る指示文</span><span id="source-state" class="sub-label">コード未入力</span></div><textarea id="generated-prompt" readonly class="prompt-output" aria-label="Geminiに送る指示文の全文"></textarea><div class="row prompt-actions"><button id="copy-prompt" class="primary">コードと指示文をコピー</button><a href="https://gemini.google.com/" target="_blank" rel="noopener noreferrer" class="secondary">Geminiを開く ↗</a></div><p class="small muted">Geminiの入力欄に貼り付けて、送信する。</p><button class="text-button" data-ai-go="2">返答が出たら：貼り戻し方を見る →</button></div></div></div>
+ <div data-ai-panel="2" class="ai-panel" hidden><div class="two-col return-grid"><div class="instruction-stack"><article class="instruction-card"><span class="step-number">1</span><div><h2>返ってきたHTMLをコピー</h2><p>CodePenのHTML欄をクリック。全部選択して、<b>丸ごと置き換える。</b></p></div></article><article class="instruction-card"><span class="step-number">2</span><div><h2>返ってきたCSSをコピー</h2><p>CSS欄も、全部選択して置き換える。</p></div></article><article class="instruction-card check-card"><span class="step-number">3</span><div><h2>画面を見て、3つ確かめる</h2><div class="check-list"><label><input type="checkbox" data-check="changed"> 頼んだところが変わっている</label><label><input type="checkbox" data-check="readable"> 文字が読みやすく、はみ出していない</label><label><input type="checkbox" data-check="kept"> 名前や文章が勝手に変わっていない</label></div></div></article><div class="again-card"><div><b>もう1か所、変えよう。</b><p>貼り戻したあとの<b>最新のHTMLとCSS</b>で、次の変更を頼みます。思った通りでなければ「いまは○○。△△にして」と、見えている結果を伝えます。</p></div><button class="primary" id="again">もう1か所変える →</button></div></div><aside class="explain-card"><div class="mini-label">貼るときのポイント</div><h2>古いコードの下に<br>付け足さない。</h2><p>それぞれの欄の中で <kbd>⌘</kbd>＋<kbd>A</kbd> → <kbd>⌘</kbd>＋<kbd>V</kbd>。</p><p class="small muted">コピーするのはコードだけ。<code>```html</code>、<code>```css</code>、説明文は入れません。JS欄は使いません。</p><details><summary>一部分のコードしか返ってこない</summary><p>次のように追加で頼みます。</p><blockquote>変更後のHTMLとCSSを、それぞれ省略せず全文で出してください。</blockquote><button class="secondary compact" data-copy-text="変更後のHTMLとCSSを、それぞれ省略せず全文で出してください。">この文をコピー</button></details><details><summary>崩れてしまったら</summary><p>直前の状態に戻すなら、CodePenの編集した欄で⌘＋Z（WindowsはCtrl＋Z）。AIに渡す前の状態に戻すなら、「控えてあるコード」からHTMLとCSSを戻せます。</p><button class="text-button" id="backup-open">控えてあるコードを見る</button></details><details class="more-ideas"><summary>早くできたら、もう1つ</summary><ul><li>項目名を変えて、自分の好きな話題を追加する。</li><li>スマートフォンのように画面幅を狭めて確認する。</li><li>色を3色以内にして、読みやすく整える。</li></ul></details></aside></div></div>
+</section>
+
+</main>
+<footer class="lesson-footer"><button id="previous" class="quiet">← 前へ</button><div><span id="footer-step">01 / 03</span><span class="footer-note">上の番号から、どこへでも移動できます。</span></div><button id="next" class="primary compact">コードを貼る →</button></footer>
+<div id="toast" role="status" aria-live="polite"></div>
+<dialog id="help-dialog"><div class="dialog-heading"><h2>困ったとき</h2><button class="icon-button" data-close aria-label="閉じる">閉じる ×</button></div><div class="dialog-content"><details open><summary>CodePen・Geminiが開けない</summary><p>学校で使うアカウントか確認して、先生に知らせましょう。CodePenの登録は冒頭のボタンから、先生の説明に沿って進めます。Geminiが使えないときは、先生の画面を見て変更を試します。</p></details><details><summary>コピーできない</summary><p>コード欄や指示文の中をクリックし、Macは⌘＋A → ⌘＋C、WindowsはCtrl＋A → Ctrl＋C。コピー先では⌘／Ctrl＋Vで貼り付けます。</p></details><details><summary>カードのデザインが表示されない</summary><p>HTMLだけでなく、CSSも「CSS」欄に貼ったか確認します。HTMLとCSSを逆に貼っていないかも見てみましょう。</p></details><details><summary>最初の見本からやり直したい</summary><p>「02 コードを貼る」から見本のHTMLとCSSをもう一度コピーできます。CodePenのいまの内容は置き換わるので、残したいものは先に保存してください。</p><button class="secondary" data-reset-start>見本のコードへ</button></details><details><summary>AIに送る前の状態を取り出したい</summary><p>「03 AIに頼む」に最後に貼ったコードを取り出せます。CodePenでその後に変更した内容は、ここには自動では戻りません。</p><button class="secondary" id="help-backup">控えてあるコードを見る</button></details></div></dialog>
+<dialog id="teacher-dialog"><div class="dialog-heading"><h2>先生用の進行メモ</h2><button class="icon-button" data-close>閉じる ×</button></div><div class="dialog-content"><p>「説明 → 1つ操作 → 画面で確かめる」を短く繰り返します。上の番号は自由に選べます。各画面の「この画面でやること」に✓が付くと、上の番号の下に進み具合が出ます。</p><h3>授業前に</h3><p>生徒用端末・学校アカウントでCodePenとGeminiが開けるか確認してください。冒頭でCodePenのアカウントを準備します。使えない生徒は、先生のGemini操作を見ながらCodePenで変更する形に切り替えられます。</p><p>CodePenは3欄のClassic Editorにリンクしています。作品の保存・提出・公開範囲は学校の運用に合わせて案内してください。テンプレートの氏名と内容は編集用の見本です。</p><h3>確認した公式案内</h3><ul class="source-links"><li><a href="https://codepen.io/accounts/signup/user/free" target="_blank" rel="noopener noreferrer">CodePen：アカウント作成</a></li><li><a href="https://blog.codepen.io/docs/what-changed/" target="_blank" rel="noopener noreferrer">CodePen：新旧エディターの違い</a></li><li><a href="https://edu.google.com/ai/gemini-for-education/" target="_blank" rel="noopener noreferrer">Google：学校アカウントでのGemini利用</a></li></ul><p class="small muted">確認日：2026年10月16日。学校の実際の設定は要確認。</p></div></dialog>
+<dialog id="backup-dialog"><div class="dialog-heading"><h2>AIに渡す前に控えたコード</h2><button class="icon-button" data-close>閉じる ×</button></div><div class="dialog-content"><p id="backup-status"></p><div class="row"><button data-backup="html" class="secondary">HTMLをコピー</button><button data-backup="css" class="secondary">CSSをコピー</button><button id="download-backup" class="secondary">コードを保存</button></div><label class="field-label" for="backup-code">取り出すコード</label><textarea id="backup-code" readonly class="code-text" aria-label="控えたコード"></textarea><p class="small muted">CodePen側のコードは自動で変更されません。必要な欄に自分で貼り戻します。</p></div></dialog>
+<script src="starter.js?v=3"></script><script src="app.js?v=3"></script>
+</body></html>
