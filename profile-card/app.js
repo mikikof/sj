@@ -24,11 +24,31 @@ function showStep(n,focus=true){n=Math.max(0,Math.min(titles.length-1,n));step=n
 function preview(css=true){const safeCss=STARTER.css.replace(/<\/style/gi,'<\\/style');return '<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; style-src \'unsafe-inline\'"><style>'+(css?safeCss:'body{font-family:sans-serif;margin:20px;color:#142238;font-size:18px;font-weight:600}h1{font-size:30px}')+'</style></head><body>'+STARTER.html+'</body></html>';}
 function stylePreview(on){$('#intro-preview').srcdoc=preview(on);$('#styled-on').setAttribute('aria-pressed',String(on));$('#styled-off').setAttribute('aria-pressed',String(!on));$('#style-caption').textContent=on?'内容は同じ。CSSが色・文字の大きさ・配置を決めています。':'カード用のCSSを外しました。文字の内容と順番はそのままです。';}
 async function copy(text,field){if(!text){toast('まだコードがありません。先にCodePenから貼り付けてください。');return false;}let ok=false;try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(text);ok=true;}}catch(e){}if(!ok){const tmp=document.createElement('textarea');tmp.value=text;tmp.style.position='fixed';tmp.style.left='-9999px';document.body.appendChild(tmp);tmp.focus();tmp.select();try{ok=document.execCommand('copy');}catch(e){}tmp.remove();}if(ok){toast('コピーしました。貼り付け先に移動してください。');return true;}if(field){field.focus();field.select();}toast(field?'自動コピーができませんでした。選択した文字を⌘＋C（WindowsはCtrl＋C）でコピーしてください。':'自動コピーができませんでした。上の文を選択し、⌘＋C（WindowsはCtrl＋C）でコピーしてください。');return false;}
-function renderSource(){const h=!!state.html.trim(),c=!!state.css.trim();for(const [t,ok] of [['html',h],['css',c]]){const el=$('[data-paste-state="'+t+'"]');el.textContent=ok?'貼りました ✓':'未入力';el.classList.toggle('done',ok);}$('#source-state').textContent=pasted()?'貼り付けたコードを使用':(h||c?'見本のコードを使用（HTMLとCSSの両方を貼ると切り替わる）':'見本のコードを使用');}
-function buildPrompt(){const c=code();return `CodePenのClassic Editorで、自己紹介カードを作っています。以下の現在のHTMLとCSSをもとに変更してください。
+function renderSource(){const h=!!state.html.trim(),c=!!state.css.trim();for(const [t,ok] of [['html',h],['css',c]]){const el=$('[data-paste-state="'+t+'"]');el.textContent=ok?'貼りました ✓':'未入力';el.classList.toggle('done',ok);}$('#source-state').textContent=pasted()?'貼ったコード・HTMLとCSSを返す':(h||c?'見本のコード・CSSだけ返す（両方を貼ると切り替わる）':'見本のコード・CSSだけ返す');$$('[data-reply]').forEach(el=>el.hidden=el.dataset.reply!==(pasted()?'both':'css'));}
+/* 見本のコードのときは CSS だけを返してもらう（CodePen で書き換えた名前や文章を、HTML の貼り直しで戻さないため）。両方を貼ったときだけ HTML も返してもらう */
+function buildPrompt(){const c=code(),req=state.request.trim()||'（ここに、変えたい場所と変え方を書きます）';if(!pasted())return `CodePenのClassic Editorで、自己紹介カードを作っています。以下のHTMLとCSSをもとに、CSSだけを変更してください。
 
 【変えたいこと】
-${state.request.trim()||'（ここに、変えたい場所と変え方を書きます）'}
+${req}
+
+【守ってほしいこと】
+・変えるのはCSSだけです。HTMLは変えないでください（名前や文章は、私がCodePenで書き換えています）。
+・HTMLを変えないとできないことは、CSSだけでできる形にするか、できないことを一言で教えてください。
+・JavaScriptや外部ライブラリ、外部画像は使わないでください。
+・読みやすい文字サイズと色にし、狭い画面でもはみ出さないようにしてください。
+・変更後のCSSを、省略せず全文、1つのコードブロックで出してください。HTMLは出さないでください。
+・CSSの中の「ここを変える」という案内コメントは残し、追加した指定にも同じように付けてください。
+・最後に、主に変えた箇所を1〜2文で教えてください。
+・この会話でこのあと頼むことも、同じようにCSSだけを全文で返してください。
+
+【現在のHTML（変えない）】
+${c.html}
+
+【現在のCSS】
+${c.css}`;return `CodePenのClassic Editorで、自己紹介カードを作っています。以下の現在のHTMLとCSSをもとに変更してください。
+
+【変えたいこと】
+${req}
 
 【守ってほしいこと】
 ・指示していない名前・文章・項目は変更しないでください。
@@ -38,6 +58,7 @@ ${state.request.trim()||'（ここに、変えたい場所と変え方を書き�
 ・HTMLはbodyの中に入る部分だけにしてください。doctype、html、head、body、styleタグは不要です。
 ・「ここを変える」という案内コメントは残し、追加した項目にも同じように付けてください。
 ・最後に、主に変えた箇所を1〜2文で教えてください。
+・この会話でこのあと頼むことも、同じようにHTMLとCSSを全文で返してください。
 
 【現在のHTML】
 ${c.html}
@@ -47,7 +68,7 @@ ${c.css}`;}
 function renderPrompt(){$('#generated-prompt').value=buildPrompt();renderSource();}
 function download(filename,content,type='text/plain;charset=utf-8'){const url=URL.createObjectURL(new Blob([content],{type}));const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 function openDialog(id){const d=$(id);if(typeof d.showModal==='function')d.showModal();else{d.setAttribute('open','');}}
-function openBackup(){const ready=!!(state.html.trim()||state.css.trim());$('#backup-status').textContent=ready?'「03 AIに頼む」の「いまのコードを使う」に最後に貼ったコードです。CodePenでその後に変えた内容は含まれません。':'まだコードを貼っていません。「03 AIに頼む」の「必要なときだけ」の欄に貼ると、ここから取り出せます。';$('#backup-code').value=state.html;$$('[data-backup]').forEach(el=>el.disabled=!state[el.dataset.backup].trim());$('#download-backup').disabled=!ready;openDialog('#backup-dialog');}
+function openBackup(){const ready=!!(state.html.trim()||state.css.trim());$('#backup-status').textContent=ready?'「03 AIに頼む」の「必要なときだけ」の欄に最後に貼ったコードです。CodePenでその後に変えた内容は含まれません。':'まだコードを貼っていません。「03 AIに頼む」の「必要なときだけ」の欄に貼ると、ここから取り出せます。';$('#backup-code').value=state.html;$$('[data-backup]').forEach(el=>el.disabled=!state[el.dataset.backup].trim());$('#download-backup').disabled=!ready;openDialog('#backup-dialog');}
 $$('[data-step]').forEach(el=>el.addEventListener('click',()=>showStep(+el.dataset.step)));
 $$('[data-go]').forEach(el=>el.addEventListener('click',()=>showStep(+el.dataset.go)));
 $('#previous').addEventListener('click',()=>showStep(step-1));$('#next').addEventListener('click',()=>showStep(step+1));
@@ -64,7 +85,7 @@ $('#use-starter').addEventListener('click',()=>{if((state.html||state.css)&&!con
 $('#change-request').value=state.request;
 $('#change-request').addEventListener('input',()=>{state.request=$('#change-request').value;persist();renderPrompt();});
 $$('[data-example]').forEach(el=>el.addEventListener('click',()=>{if(state.request.trim()&&!Object.values(examples).includes(state.request)&&!confirm('入力中の指示文を、この例に置き換えますか？'))return;state.request=examples[el.dataset.example];$('#change-request').value=state.request;persist();renderPrompt();$('#change-request').focus();}));
-$('#copy-prompt').addEventListener('click',async()=>{if(!state.request.trim()){toast('変えたい場所と変え方を、ひと言書いてください。');$('#change-request').focus();return;}if(state.html.trim()&&!state.css.trim()||!state.html.trim()&&state.css.trim()){toast('「いまのコードを使う」は、HTMLとCSSの両方を貼ると使えます。いまは見本のコードで作っています。');}await copy(buildPrompt(),$('#generated-prompt'));});
+$('#copy-prompt').addEventListener('click',async()=>{if(!state.request.trim()){toast('変えたい場所と変え方を、ひと言書いてください。');$('#change-request').focus();return;}if(state.html.trim()&&!state.css.trim()||!state.html.trim()&&state.css.trim()){toast('貼ったコードは、HTMLとCSSの両方を貼ると使えます。いまは見本のコードで、CSSだけを返してもらう指示文です。');}await copy(buildPrompt(),$('#generated-prompt'));});
 $$('[data-copy-text]').forEach(el=>el.addEventListener('click',()=>copy(el.dataset.copyText)));
 $('#help-open').addEventListener('click',()=>openDialog('#help-dialog'));$('#teacher-open').addEventListener('click',()=>openDialog('#teacher-dialog'));
 $$('[data-close]').forEach(el=>el.addEventListener('click',()=>el.closest('dialog').close()));

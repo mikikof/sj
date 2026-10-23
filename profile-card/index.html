@@ -2,6 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
 <meta name="description" content="品川女子学院 中学1年生のための、CodePenとGeminiでつくる自己紹介カード。編集の手順をたどる体験ガイド。">
 <title>自己紹介カードをつくる｜品川女子学院</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%228%22 fill=%22%231f4a7d%22/%3E%3Cpath d=%22M12 10l-6 6 6 6M20 10l6 6-6 6%22 stroke=%22white%22 stroke-width=%223%22 fill=%22none%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E">
@@ -94,13 +95,14 @@
    <div class="row prompt-actions"><button id="copy-prompt" class="primary">コードと指示文をコピー</button><a href="https://gemini.google.com/" target="_blank" rel="noopener noreferrer" class="secondary">Geminiへ ↗</a></div>
    <ol class="after-list">
     <li>Geminiの入力欄に貼り付けて、送信する。</li>
-    <li>返ってきたHTMLとCSSを、CodePenのそれぞれの欄に<b>丸ごと置き換える。</b></li>
+    <li data-reply="css">返ってきたCSSを、CodePenのCSS欄に<b>丸ごと置き換える。</b>HTML欄はさわらない（書き換えた名前や文章がそのまま残る）。</li>
+    <li data-reply="both" hidden>返ってきたHTMLとCSSを、CodePenのそれぞれの欄に<b>丸ごと置き換える。</b></li>
     <li>2回目からは、同じGeminiの会話に<b>頼みたいことだけ</b>を書いて送ればOK。</li>
    </ol>
   </div>
  </div>
- <details class="option-box" id="current-option"><summary>必要なときだけ：CodePenのいまのコードを使う</summary>
-  <p class="muted">最初は見本のコードで指示文を作ります。自分で文字を書き換えたあとに頼むときや、Geminiの返事がうまくいかないときは、CodePenのいまのHTMLとCSSをここに貼ると、それを指示文に使います。</p>
+ <details class="option-box" id="current-option"><summary>必要なときだけ：項目を足す・CodePenのいまのコードを使う</summary>
+  <p class="muted">ふだんは見本のコードで指示文を作り、GeminiにはCSSだけを返してもらいます。項目を足すなどHTMLも変えたいとき、新しいGeminiの会話で続きを頼むとき、返事がうまくいかないときは、CodePenのいまのHTMLとCSSを<b>両方</b>ここに貼ってください。指示文がそのコードを使い、HTMLとCSSの両方を返してもらう形に変わります。</p>
   <div class="two-col current-pair">
    <div class="current-card"><label class="current-head" for="current-html"><span class="code-name">HTML <small>CodePenのHTML欄から</small></span><span class="paste-state" data-paste-state="html">未入力</span></label><textarea id="current-html" class="code-text current-code" spellcheck="false" placeholder="CodePenのHTML欄をクリック → 全部選択（⌘＋A）→ コピー（⌘＋C）→ ここに貼る"></textarea></div>
    <div class="current-card"><label class="current-head" for="current-css"><span class="code-name">CSS <small>CodePenのCSS欄から</small></span><span class="paste-state" data-paste-state="css">未入力</span></label><textarea id="current-css" class="code-text current-code" spellcheck="false" placeholder="CodePenのCSS欄をクリック → 全部選択（⌘＋A）→ コピー（⌘＋C）→ ここに貼る"></textarea></div>
@@ -115,5 +117,5 @@
 <dialog id="help-dialog"><div class="dialog-heading"><h2>困ったとき</h2><button class="icon-button" data-close aria-label="閉じる">閉じる ×</button></div><div class="dialog-content"><details open><summary>CodePen・Geminiが開けない</summary><p>学校で使うアカウントか確認して、先生に知らせましょう。CodePenの登録は冒頭のボタンから、先生の説明に沿って進めます。Geminiが使えないときは、先生の画面を見て変更を試します。</p></details><details><summary>コピーできない</summary><p>コード欄や指示文の中をクリックし、Macは⌘＋A → ⌘＋C、WindowsはCtrl＋A → Ctrl＋C。コピー先では⌘／Ctrl＋Vで貼り付けます。</p></details><details><summary>カードのデザインが表示されない</summary><p>HTMLだけでなく、CSSも「CSS」欄に貼ったか確認します。HTMLとCSSを逆に貼っていないかも見てみましょう。</p></details><details><summary>最初の見本からやり直したい</summary><p>「02 コードを貼る」から見本のHTMLとCSSをもう一度コピーできます。CodePenのいまの内容は置き換わるので、残したいものは先に保存してください。</p><button class="secondary" data-reset-start>見本のコードへ</button></details><details><summary>貼ったコードを取り出したい</summary><p>「03 AIに頼む」の「必要なときだけ」の欄に最後に貼ったコードを取り出せます。CodePenでその後に変更した内容は、ここには自動では戻りません。</p><button class="secondary" id="help-backup">控えてあるコードを見る</button></details></div></dialog>
 <dialog id="teacher-dialog"><div class="dialog-heading"><h2>先生用の進行メモ</h2><button class="icon-button" data-close>閉じる ×</button></div><div class="dialog-content"><p>「説明 → 1つ操作 → 画面で確かめる」を短く繰り返します。上の番号は自由に選べます。</p><h3>授業前に</h3><p>生徒用端末・学校アカウントでCodePenとGeminiが開けるか確認してください。冒頭でCodePenのアカウントを準備します。使えない生徒は、先生のGemini操作を見ながらCodePenで変更する形に切り替えられます。</p><p>CodePenは3欄のClassic Editorにリンクしています。作品の保存・提出・公開範囲は学校の運用に合わせて案内してください。テンプレートの氏名と内容は編集用の見本です。</p><h3>確認した公式案内</h3><ul class="source-links"><li><a href="https://codepen.io/accounts/signup/user/free" target="_blank" rel="noopener noreferrer">CodePen：アカウント作成</a></li><li><a href="https://blog.codepen.io/docs/what-changed/" target="_blank" rel="noopener noreferrer">CodePen：新旧エディターの違い</a></li><li><a href="https://edu.google.com/ai/gemini-for-education/" target="_blank" rel="noopener noreferrer">Google：学校アカウントでのGemini利用</a></li></ul><p class="small muted">確認日：2026年10月16日。学校の実際の設定は要確認。</p></div></dialog>
 <dialog id="backup-dialog"><div class="dialog-heading"><h2>貼ったコードの控え</h2><button class="icon-button" data-close>閉じる ×</button></div><div class="dialog-content"><p id="backup-status"></p><div class="row"><button data-backup="html" class="secondary">HTMLをコピー</button><button data-backup="css" class="secondary">CSSをコピー</button><button id="download-backup" class="secondary">コードを保存</button></div><label class="field-label" for="backup-code">取り出すコード</label><textarea id="backup-code" readonly class="code-text" aria-label="控えたコード"></textarea><p class="small muted">CodePen側のコードは自動で変更されません。必要な欄に自分で貼り戻します。</p></div></dialog>
-<script src="starter.js?v=4"></script><script src="app.js?v=5"></script>
+<script src="starter.js?v=4"></script><script src="app.js?v=6"></script>
 </body></html>
