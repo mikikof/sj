@@ -15,7 +15,7 @@ let state={html:'',css:'',request:'',savedAt:''};
 let storageNotice=false;
 try {const old=JSON.parse(localStorage.getItem(KEY));if(old&&old.version===1){for(const k of ['html','css','request','savedAt'])if(typeof old[k]==='string')state[k]=old[k];}}
 catch(e){storageNotice=true;}
-let step=0,currentTab='html',toastTimer,copied={html:false,css:false};
+let step=0,toastTimer,copied={html:false,css:false};
 function toast(message){clearTimeout(toastTimer);$('#toast').textContent=message;$('#toast').classList.add('visible');toastTimer=setTimeout(()=>$('#toast').classList.remove('visible'),4200);}
 function persist(){try{localStorage.setItem(KEY,JSON.stringify({...state,version:1}));}catch(e){if(!storageNotice){toast('このブラウザでは控えを保存できません。ページを閉じる前にコードを保存してください。');storageNotice=true;}}}
 function pasted(){return !!(state.html.trim()&&state.css.trim());}
@@ -24,8 +24,7 @@ function showStep(n,focus=true){n=Math.max(0,Math.min(titles.length-1,n));step=n
 function preview(css=true){const safeCss=STARTER.css.replace(/<\/style/gi,'<\\/style');return '<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; style-src \'unsafe-inline\'"><style>'+(css?safeCss:'body{font-family:sans-serif;margin:20px;color:#142238;font-size:18px;font-weight:600}h1{font-size:30px}')+'</style></head><body>'+STARTER.html+'</body></html>';}
 function stylePreview(on){$('#intro-preview').srcdoc=preview(on);$('#styled-on').setAttribute('aria-pressed',String(on));$('#styled-off').setAttribute('aria-pressed',String(!on));$('#style-caption').textContent=on?'内容は同じ。CSSが色・文字の大きさ・配置を決めています。':'カード用のCSSを外しました。文字の内容と順番はそのままです。';}
 async function copy(text,field){if(!text){toast('まだコードがありません。先にCodePenから貼り付けてください。');return false;}let ok=false;try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(text);ok=true;}}catch(e){}if(!ok){const tmp=document.createElement('textarea');tmp.value=text;tmp.style.position='fixed';tmp.style.left='-9999px';document.body.appendChild(tmp);tmp.focus();tmp.select();try{ok=document.execCommand('copy');}catch(e){}tmp.remove();}if(ok){toast('コピーしました。貼り付け先に移動してください。');return true;}if(field){field.focus();field.select();}toast(field?'自動コピーができませんでした。選択した文字を⌘＋C（WindowsはCtrl＋C）でコピーしてください。':'自動コピーができませんでした。上の文を選択し、⌘＋C（WindowsはCtrl＋C）でコピーしてください。');return false;}
-function setCurrentTab(t){currentTab=t;$('#current-code').value=state[t];$('#current-code').setAttribute('aria-label','いまCodePenにある'+t.toUpperCase());$('#current-code').placeholder='CodePenの'+t.toUpperCase()+'欄をクリック → 全部選択（⌘＋A）→ コピー（⌘＋C）→ ここに貼る';$$('[data-current]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.current===t)));renderSource();}
-function renderSource(){const h=!!state.html.trim(),c=!!state.css.trim();$('#code-paste-state').textContent=(h?'HTML ✓':'HTML 未入力')+' / '+(c?'CSS ✓':'CSS 未入力');$('#source-state').textContent=pasted()?'貼り付けたコードを使用':(h||c?'見本のコードを使用（HTMLとCSSの両方を貼ると切り替わる）':'見本のコードを使用');}
+function renderSource(){const h=!!state.html.trim(),c=!!state.css.trim();for(const [t,ok] of [['html',h],['css',c]]){const el=$('[data-paste-state="'+t+'"]');el.textContent=ok?'貼りました ✓':'未入力';el.classList.toggle('done',ok);}$('#source-state').textContent=pasted()?'貼り付けたコードを使用':(h||c?'見本のコードを使用（HTMLとCSSの両方を貼ると切り替わる）':'見本のコードを使用');}
 function buildPrompt(){const c=code();return `CodePenのClassic Editorで、自己紹介カードを作っています。以下の現在のHTMLとCSSをもとに変更してください。
 
 【変えたいこと】
@@ -60,9 +59,8 @@ $('#starter-html').value=STARTER.html;$('#starter-css').value=STARTER.css;
 $$('[data-copy-starter]').forEach(el=>el.addEventListener('click',async()=>{const t=el.dataset.copyStarter;if(await copy(STARTER[t],$('#starter-'+t))){copied[t]=true;$('[data-copy-state="'+t+'"]').textContent=t.toUpperCase()+'をコピーしました → CodePenの'+t.toUpperCase()+'欄へ';$('[data-copy-state="'+t+'"]').classList.add('done');}}));
 $$('[data-select-starter]').forEach(el=>el.addEventListener('click',()=>{const f=$('#starter-'+el.dataset.selectStarter);f.focus();f.select();toast('全文を選択しました。⌘＋C（WindowsはCtrl＋C）でコピーできます。');}));
 /* 03: 必要なときだけ、CodePen のいまのコードを貼る */
-$$('[data-current]').forEach(el=>el.addEventListener('click',()=>setCurrentTab(el.dataset.current)));
-$('#current-code').addEventListener('input',()=>{state[currentTab]=$('#current-code').value;state.savedAt=new Date().toISOString();persist();renderPrompt();});
-$('#use-starter').addEventListener('click',()=>{if((state.html||state.css)&&!confirm('貼ったHTMLとCSSを消して、見本のコードで指示文を作ります。よろしいですか？'))return;state.html='';state.css='';persist();setCurrentTab(currentTab);renderPrompt();toast('見本のコードで指示文を作ります。');});
+for(const t of ['html','css']){$('#current-'+t).value=state[t];$('#current-'+t).addEventListener('input',()=>{state[t]=$('#current-'+t).value;state.savedAt=new Date().toISOString();persist();renderPrompt();});}
+$('#use-starter').addEventListener('click',()=>{if((state.html||state.css)&&!confirm('貼ったHTMLとCSSを消して、見本のコードで指示文を作ります。よろしいですか？'))return;state.html='';state.css='';$('#current-html').value='';$('#current-css').value='';persist();renderPrompt();toast('見本のコードで指示文を作ります。');});
 $('#change-request').value=state.request;
 $('#change-request').addEventListener('input',()=>{state.request=$('#change-request').value;persist();renderPrompt();});
 $$('[data-example]').forEach(el=>el.addEventListener('click',()=>{if(state.request.trim()&&!Object.values(examples).includes(state.request)&&!confirm('入力中の指示文を、この例に置き換えますか？'))return;state.request=examples[el.dataset.example];$('#change-request').value=state.request;persist();renderPrompt();$('#change-request').focus();}));
@@ -75,7 +73,7 @@ $$('[data-reset-start]').forEach(el=>el.addEventListener('click',()=>{$('#help-d
 $('#help-backup').addEventListener('click',()=>{$('#help-dialog').close();openBackup();});
 $$('[data-backup]').forEach(el=>el.addEventListener('click',()=>{const t=el.dataset.backup;$('#backup-code').value=state[t];copy(state[t],$('#backup-code'));}));
 $('#download-backup').addEventListener('click',()=>{download('自己紹介カード-コードの控え.txt','【HTML】\n'+state.html+'\n\n【CSS】\n'+state.css);});
-stylePreview(true);$('#copy-preview').srcdoc=preview(true);setCurrentTab('html');renderPrompt();
+stylePreview(true);$('#copy-preview').srcdoc=preview(true);renderPrompt();
 if(state.html.trim()||state.css.trim())$('#current-option').open=true;
 const match=location.hash.match(/^#step-([1-3])$/);showStep(match?Number(match[1])-1:0,false);
 if(storageNotice)toast('このブラウザでは控えを保存できない場合があります。必要なコードは端末にも保存してください。');
