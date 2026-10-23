@@ -50,7 +50,7 @@ mark { background: linear-gradient(transparent 58%, #ffd9e6 58%); color: inherit
 .quiet:hover, .icon-button:hover { background: var(--navy-soft); }
 
 /* ── 段の札（1 準備する・2 コードを貼る・3 AIに頼む）── */
-.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; padding: 0 28px; background: var(--card); border-bottom: 1px solid var(--line); }
+.steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; padding: 0 28px; background: var(--card); border-bottom: 1px solid var(--line); }
 .steps button { position: relative; display: flex; align-items: center; gap: 14px; padding: 14px 18px 16px; text-align: left; border-radius: 0; }
 .steps button + button::before { content: ""; position: absolute; left: -22px; top: 50%; width: 44px; height: 2px; background: var(--line-strong); }
 .step-dot { position: relative; display: grid; place-items: center; flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--line-strong); background: var(--card); color: var(--muted); font-size: 18px; font-weight: 800; }
@@ -83,7 +83,7 @@ main { min-height: 0; overflow: auto; padding: 30px 28px 34px; scrollbar-gutter:
 .goal-card mark { background: linear-gradient(transparent 60%, rgba(214, 82, 123, .55) 60%); color: #fff; }
 .goal-label { font-size: 15px; font-weight: 800; letter-spacing: .08em; color: #ffc4d6; }
 .goal-text { margin-top: 4px; font-size: 23px; font-weight: 800; line-height: 1.5; }
-.mission-list { list-style: none; margin: 14px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.mission-list { list-style: none; margin: 14px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .mission-list li { display: flex; align-items: flex-start; gap: 10px; padding: 12px; border-radius: 12px; background: rgba(255, 255, 255, .08); }
 .mission-list li > span:last-child { display: flex; flex-direction: column; line-height: 1.4; }
 .mission-list b { font-size: 16px; line-height: 1.45; }
@@ -330,5 +330,31 @@ dialog::backdrop { background: rgba(27, 38, 64, .45); backdrop-filter: blur(3px)
 .paste-state.done { color: var(--mint); }
 @media (max-width:1100px) { .guide-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } .check-grid { grid-template-columns: 1fr; } }
 @media (max-width:800px) { .guide-steps { grid-template-columns: 1fr; } .code-pair .code-text { height: 320px; } }
+/* 04 提出する */
+.guide-steps.submit-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.submit-steps li { align-items: flex-start; }
+.submit-steps li > div { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.submit-steps small { font-size: 15px; line-height: 1.6; color: var(--muted); overflow-wrap: anywhere; }
+.submit-card, .sent-card { min-width: 0; padding: 22px 24px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--card); box-shadow: var(--shadow); }
+.text-input { display: block; width: 100%; min-width: 0; border: 2px solid var(--line-strong); background: var(--card); color: var(--ink); padding: 12px 14px; border-radius: 14px; font: inherit; font-size: 18px; font-weight: 600; }
+.text-input:focus { border-color: var(--navy); }
+.text-input::placeholder { color: #66748d; opacity: 1; }
+.field-check { min-height: 1.7em; margin: 8px 0 20px; font-size: 16px; font-weight: 700; color: var(--muted); overflow-wrap: anywhere; }
+.field-check.good, .submit-status.good { color: var(--mint); }
+.field-check.bad, .submit-status.bad { color: var(--rose-deep); }
+.class-field { min-width: 0; margin: 0 0 20px; padding: 0; border: 0; }
+.class-options { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+.class-options label { position: relative; display: block; }
+.class-options input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.class-options span { display: grid; place-items: center; min-height: 56px; border: 2px solid var(--line-strong); border-radius: 12px; background: var(--card); color: var(--navy-deep); font-size: 20px; font-weight: 800; cursor: pointer; }
+.class-options label:hover span { background: var(--navy-soft); }
+.class-options input:checked + span { background: var(--navy); border-color: var(--navy); color: #fff; }
+.class-options input:focus-visible + span { outline: 3px solid #4a83c2; outline-offset: 2px; }
+.submit-status { min-height: 1.7em; margin-top: 14px; font-size: 17px; font-weight: 700; overflow-wrap: anywhere; }
+.sent-card .small { margin-top: 4px; }
+.sent-list { margin: 12px 0 0; padding-left: 22px; display: grid; gap: 8px; font-size: 16px; }
+.sent-list b { display: block; }
+.sent-list small { display: block; color: var(--muted); font-size: 14px; overflow-wrap: anywhere; }
+@media (max-width:800px) { .guide-steps.submit-steps { grid-template-columns: 1fr; } .class-options { grid-template-columns: repeat(3, minmax(0, 1fr)); } .submit-card, .sent-card { padding: 18px 16px; } #submit-url { font-size: 16px; padding: 12px 10px; } }
 @media (prefers-reduced-motion:reduce) { * { scroll-behavior: auto !important; } }
 @media print { body { display: block; height: auto; } .site-header,.steps,.lesson-footer,dialog,#toast { display: none; } main { overflow: visible; padding: 0; } .stage { break-after: page; } .stage[hidden],.ai-panel[hidden] { display: block !important; } .two-col { display: block; } .ai-nav { display: none; } }
