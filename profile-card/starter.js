@@ -47,7 +47,7 @@ window.STARTER = {
         <!-- ここを変える：項目名「MBTI」 -->
         <dt>MBTI</dt>
         <!-- ここを変える：MBTI -->
-        <dd>論理学者</dd>
+        <dd>INTP（論理学者）</dd>
       </div>
       <div class="detail-row">
         <!-- ここを変える：項目名「推し」 -->
@@ -74,7 +74,7 @@ window.STARTER = {
       <!-- ここを変える：項目名「最近のひとこと」 -->
       <h2>最近のひとこと</h2>
       <!-- ここを変える：最近のひとこと -->
-      <p class="recent-comment">早くお正月が来てほしい</p>
+      <p class="recent-comment">夏が終わって嬉しい</p>
     </section>
   </div>
 </article>`,
