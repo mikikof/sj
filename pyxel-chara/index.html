@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="description" content="品川女子学院 中学1年生のための、画像から Pyxel のドット絵キャラ（16×16）をつくるページ。">
+<title>ドット絵キャラをつくる｜品川女子学院</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22 shape-rendering=%22crispEdges%22%3E%3Crect width=%2216%22 height=%2216%22 rx=%223%22 fill=%22%231f4a7d%22/%3E%3Cpath fill=%22%23a9c1ff%22 d=%22M5 3h6v1h1v5h-1v1H5V9H4V4h1z%22/%3E%3Cpath fill=%22%23fff%22 d=%22M6 5h1v2H6zM9 5h1v2H9z%22/%3E%3Cpath fill=%22%23ff9798%22 d=%22M5 11h6v2H5z%22/%3E%3C/svg%3E">
+<link rel="stylesheet" href="app.css?v=1">
+</head>
+<body>
+<header class="site-header">
+  <div class="brand"><span class="brand-mark" aria-hidden="true"><canvas id="brand-sprite" width="16" height="16"></canvas></span><span><b>ドット絵キャラをつくる</b><small>品川女子学院 · 中学1年生 · Pyxel</small></span></div>
+  <div class="header-actions">
+    <a href="https://gemini.google.com/" target="_blank" rel="noopener noreferrer" class="tool-link"><span class="tool-dot ai" aria-hidden="true"></span>Gemini <span aria-hidden="true">↗</span></a>
+    <a href="https://kitao.github.io/pyxel/web/code-maker/" target="_blank" rel="noopener noreferrer" class="tool-link"><span class="tool-dot pyxel" aria-hidden="true"></span>Pyxel Code Maker <span aria-hidden="true">↗</span></a>
+    <button class="quiet" id="help-open" type="button">困ったとき</button>
+  </div>
+</header>
+
+<main id="main" class="layout">
+ <div class="col">
+  <section class="card step-1" aria-labelledby="h-1">
+   <div class="card-head"><span class="step-no">1</span><h2 id="h-1">画像をえらぶ</h2></div>
+   <details class="prompt-box" id="prompt-box">
+    <summary>まだ絵が無いとき：Gemini に頼む文</summary>
+    <div class="prompt-body">
+     <label class="field-label" for="chara-idea">どんなキャラ？</label>
+     <input id="chara-idea" type="text" placeholder="例：ヘッドホンをつけたペンギン。色は水色とオレンジ" autocomplete="off">
+     <div class="row-actions">
+      <button class="primary compact" id="copy-prompt-text" type="button">頼む文をコピー</button>
+      <button class="secondary compact" id="copy-prompt-image" type="button">手描きの絵を付けて頼む文をコピー</button>
+     </div>
+     <p class="copy-state" id="copy-state" role="status" aria-live="polite"></p>
+     <textarea id="prompt-preview" class="prompt-preview" readonly rows="8" aria-label="Gemini に頼む文"></textarea>
+     <p class="small muted">アニメやゲームにすでにいるキャラは頼みません。自分で考えたキャラにします。できた絵は、ダウンロードしてから下でえらびます。</p>
+    </div>
+   </details>
+   <div id="dropzone" class="dropzone">
+    <p class="drop-title">ここに画像をドラッグ</p>
+    <p class="drop-sub">Gemini で作った絵や、手描きの絵の写真が使えます。</p>
+    <div class="drop-actions">
+     <label class="primary file-button">画像をえらぶ<input id="file-input" type="file" accept="image/*"></label>
+     <button class="secondary" id="camera-open" type="button">カメラで撮る</button>
+    </div>
+    <p class="drop-note">コピーした画像は、⌘＋V で貼り付けられます。</p>
+   </div>
+   <div id="source-area" class="source-area" hidden>
+    <div class="tool-bar" role="group" aria-label="元の画像の上でマウスを使う道具">
+     <button type="button" class="tool" data-tool="crop" aria-pressed="true">範囲を囲む</button>
+     <button type="button" class="tool" data-tool="select" aria-pressed="false">キャラをえらぶ</button>
+     <button type="button" class="tool" data-tool="erase" aria-pressed="false">クリックで消す</button>
+    </div>
+    <div class="source-frame"><canvas id="source-canvas" aria-label="元の画像。マウスで使う範囲を囲む・キャラをえらぶ・消したい所をクリックできます"></canvas></div>
+    <p class="caption"><span>市松模様の所は、背景として消える所です。</span><span id="tool-caption">絵の上をドラッグして囲むと、使う範囲を変えられます。</span></p>
+    <div class="row-actions">
+     <button class="secondary compact" id="mark-undo" type="button" disabled>クリックを 1 つもどす</button>
+     <button class="secondary compact" id="crop-reset" type="button">範囲を全体にもどす</button>
+     <button class="text-button" id="source-clear" type="button">別の画像にする</button>
+    </div>
+   </div>
+  </section>
+
+  <section class="card step-2" aria-labelledby="h-2">
+   <div class="card-head"><span class="step-no">2</span><h2 id="h-2">自動でととのえる</h2></div>
+   <p class="small muted">元の画像から、16×16 のドット絵を自動で作るときの設定です。</p>
+   <div class="controls" id="controls">
+    <div class="control switch-row"><label for="opt-removeBg">背景を消す</label><input id="opt-removeBg" type="checkbox" checked></div>
+    <div class="control slider-row"><label for="opt-tolerance">消す強さ</label><input id="opt-tolerance" type="range" min="0" max="100" step="1" value="40"><output id="out-tolerance" for="opt-tolerance">40</output><p class="hint">背景が残るときは強く、キャラまで消えるときは弱くします。「キャラをえらぶ」「クリックで消す」の広がり方も、これで変わります。</p></div>
+    <div class="control switch-row"><label for="opt-removeHoles">すき間に残った背景も消す</label><input id="opt-removeHoles" type="checkbox"></div>
+    <div class="control slider-row"><label for="opt-height">キャラの高さ</label><input id="opt-height" type="range" min="8" max="16" step="1" value="16"><output id="out-height" for="opt-height">16 マス</output></div>
+    <div class="control slider-row"><label for="opt-colors">色の数</label><input id="opt-colors" type="range" min="2" max="10" step="1" value="6"><output id="out-colors" for="opt-colors">6 色</output><p class="hint">少ないほど、すっきりしたドット絵になります。</p></div>
+    <div class="control slider-row"><label for="opt-vivid">色のこさ</label><input id="opt-vivid" type="range" min="0" max="100" step="1" value="0"><output id="out-vivid" for="opt-vivid">0</output><p class="hint">色えんぴつのうすい色が白になるときは、こくします。</p></div>
+    <div class="control switch-row"><label for="opt-features">目などの小さな黒い点を残す</label><input id="opt-features" type="checkbox" checked></div>
+    <div class="control switch-row"><label for="opt-outline">ふちをこくする</label><input id="opt-outline" type="checkbox" checked></div>
+    <div class="control switch-row"><label for="opt-flip">左右を反転</label><input id="opt-flip" type="checkbox"></div>
+    <button class="text-button" id="opts-reset" type="button">はじめの設定にもどす</button>
+   </div>
+   <p class="note small" id="manual-note" hidden>手で塗ったマスは、ここの設定を変えてもそのまま残ります。3 の「手で直したところを消す」で、自動の結果にもどります。</p>
+  </section>
+ </div>
+
+ <div class="col">
+  <section class="card step-3" aria-labelledby="h-3">
+   <div class="card-head"><span class="step-no">3</span><h2 id="h-3">手で仕上げる</h2><span class="sub-label">16×16 マス</span></div>
+   <div class="frame-tabs" role="tablist" aria-label="4 つのコマ">
+    <button type="button" class="frame-tab" role="tab" data-frame="0" aria-selected="true"><canvas width="32" height="32"></canvas><span>たち</span></button>
+    <button type="button" class="frame-tab" role="tab" data-frame="1" aria-selected="false"><canvas width="32" height="32"></canvas><span>あるき</span></button>
+    <button type="button" class="frame-tab" role="tab" data-frame="2" aria-selected="false"><canvas width="32" height="32"></canvas><span>ジャンプ</span></button>
+    <button type="button" class="frame-tab" role="tab" data-frame="3" aria-selected="false"><canvas width="32" height="32"></canvas><span>わざ</span></button>
+   </div>
+   <p class="small muted" id="frame-hint">「たち」がもとの絵です。ほかのコマは「たち」を写した形から始まり、足や目だけを描き変えます。</p>
+   <div class="editor">
+    <div class="editor-main">
+     <canvas id="edit-canvas" width="352" height="352" aria-label="16×16 マスの絵。クリックやドラッグで塗れます"></canvas>
+     <div class="overlay-box">
+      <div class="control switch-row"><label for="ov-on">元の絵を重ねる</label><input id="ov-on" type="checkbox"></div>
+      <div class="control slider-row"><label for="ov-alpha">重ねるこさ</label><input id="ov-alpha" type="range" min="10" max="90" step="5" value="45"><output id="out-ov-alpha" for="ov-alpha">45</output></div>
+      <div class="control slider-row"><label for="ov-zoom">重ねる大きさ</label><input id="ov-zoom" type="range" min="50" max="200" step="5" value="100"><output id="out-ov-zoom" for="ov-zoom">100%</output></div>
+      <div class="row-actions"><button type="button" class="secondary compact" id="ov-move" aria-pressed="false">重ねた絵を動かす</button><button type="button" class="text-button" id="ov-reset">重ねる位置をもどす</button></div>
+     </div>
+    </div>
+    <div class="editor-side">
+     <p class="mini-label">道具</p>
+     <div class="pens" role="group" aria-label="塗る道具">
+      <button type="button" class="pen" data-pen="paint" aria-pressed="true">ぬる</button>
+      <button type="button" class="pen" data-pen="erase" aria-pressed="false">けす</button>
+      <button type="button" class="pen" data-pen="fill" aria-pressed="false">バケツ</button>
+      <button type="button" class="pen" data-pen="pick" aria-pressed="false">スポイト</button>
+     </div>
+     <button type="button" class="toggle" id="mirror" aria-pressed="false">左右対称に塗る</button>
+     <p class="mini-label">色</p>
+     <div class="palette" id="palette" role="group" aria-label="色"></div>
+     <div class="row-actions tight"><button type="button" class="secondary compact" id="undo" disabled>もどす</button><button type="button" class="secondary compact" id="redo" disabled>やりなおす</button></div>
+     <p class="mini-label">絵ぜんたいをずらす</p>
+     <div class="shift-pad" role="group" aria-label="絵ぜんたいを 1 マスずらす">
+      <button type="button" data-shift="0,-1" aria-label="上へ">↑</button>
+      <button type="button" data-shift="-1,0" aria-label="左へ">←</button>
+      <button type="button" data-shift="1,0" aria-label="右へ">→</button>
+      <button type="button" data-shift="0,1" aria-label="下へ">↓</button>
+     </div>
+    </div>
+   </div>
+   <div class="row-actions">
+    <button type="button" class="secondary compact" id="frame-clear">手で直したところを消す</button>
+    <button type="button" class="text-button" id="frame-blank">このコマをまっさらにする</button>
+   </div>
+   <p class="status" id="result-status" role="status" aria-live="polite">画像をえらぶと、ここにドット絵が出ます。画像なしで、まっさらから描くこともできます。</p>
+   <div class="preview-row">
+    <div><p class="mini-label">ゲームの中では、この大きさ</p><canvas id="game-canvas" width="256" height="128" aria-label="ゲームの画面で、4 つのコマを使って動かした見本"></canvas></div>
+    <div><p class="mini-label">使っている色</p><div id="colors-used" class="colors-used"></div></div>
+   </div>
+  </section>
+
+  <section class="card step-4" aria-labelledby="h-4">
+   <div class="card-head"><span class="step-no">4</span><h2 id="h-4">保存して、<wbr>Code Maker で開く</h2></div>
+   <button class="primary wide" id="save-zip" type="button" disabled>Code Maker 用に保存（ZIP）</button>
+   <ol class="open-steps">
+    <li><a href="https://kitao.github.io/pyxel/web/code-maker/" target="_blank" rel="noopener noreferrer">Pyxel Code Maker</a> を開きます。</li>
+    <li>上の <b>Load</b> → <b>File</b> で、保存した ZIP をえらびます。</li>
+    <li>右の画面をクリックして、←→・SPACE・Z で動かしてみます。</li>
+    <li>直したくなったら、このページで直して保存し直すか、Code Maker の <b>Res</b> で直して <b>Run</b> を押します。</li>
+    <li>終わる前に <b>Save</b> → <b>File</b> で ZIP を保存します。次の時間はその ZIP から始めます。</li>
+   </ol>
+   <p class="note"><span class="swatch" style="background:#000"></span>Code Maker の Res で黒（パレットのいちばん左上）で塗った所は、ゲームでは透明になります。キャラの黒い所は、そのとなりの紺で塗ります。</p>
+   <button class="text-button" id="save-png" type="button" disabled>4 コマを画像だけ保存（PNG）</button>
+  </section>
+ </div>
+</main>
+
+<footer class="site-footer"><p>画像はこのページの中だけで使い、どこにも送りません。</p></footer>
+
+<dialog id="camera-dialog" aria-labelledby="camera-title">
+ <div class="dialog-inner">
+  <h2 id="camera-title">カメラで撮る</h2>
+  <p class="small muted">絵を描いた紙を、画面いっぱいに映します。影が入らないようにします。</p>
+  <video id="camera-video" playsinline muted></video>
+  <p class="status" id="camera-status" role="status" aria-live="polite"></p>
+  <div class="row-actions"><button class="primary" id="camera-shot" type="button" disabled>撮る</button><button class="secondary" id="camera-close" type="button">やめる</button></div>
+ </div>
+</dialog>
+
+<dialog id="help-dialog" aria-labelledby="help-title">
+ <div class="dialog-inner">
+  <h2 id="help-title">困ったとき</h2>
+  <dl class="help-list">
+   <dt>背景が残る／キャラまで消える</dt><dd>2 の「消す強さ」を動かします。手描きの写真で背景が残るときは、絵の上をドラッグして、使う範囲を絵のまわりだけにします。</dd>
+   <dt>白いキャラの背景が消えない／キャラまで消える</dt><dd>1 の「キャラをえらぶ」を押してから、キャラの中をクリックします。クリックしたキャラだけが残り、ほかは消えます。広がりすぎるときは、2 の「消す強さ」を弱くしてから、「クリックを 1 つもどす」でやり直します。</dd>
+   <dt>目が出ない・目がつぶれる</dt><dd>2 の「目などの小さな黒い点を残す」を入れます。16×16 では目は 1 マスの点になります。思った所に出ないときは、3 で 1 マス塗ります。</dd>
+   <dt>自動でうまくいかない</dt><dd>3 の「元の絵を重ねる」を入れると、元の絵がうすく重なります。それを見ながら、ぬる・けす・バケツで描き直します。「このコマをまっさらにする」を押してから、なぞって描くこともできます。</dd>
+   <dt>色が元の絵と違う</dt><dd>Pyxel で使える色は 16 色だけなので、いちばん近い色に置き換わります。うすい色が白になるときは、2 の「色のこさ」を上げます。Code Maker の Res でも塗り直せます。</dd>
+   <dt>キャラが小さい・大きい</dt><dd>2 の「キャラの高さ」で変えます。16 マスがいちばん大きい形です。位置は 3 の矢印で 1 マスずつずらせます。</dd>
+   <dt>カメラが映らない</dt><dd>ブラウザが「カメラを使いますか」と聞いてきたら、許可します。ほかのアプリがカメラを使っているときは、そちらを閉じます。</dd>
+   <dt>iPhone の写真が開けない</dt><dd>HEIC という形の写真は開けないことがあります。「カメラで撮る」を使うか、画面のスクリーンショットを使います。</dd>
+   <dt>ZIP を開けない</dt><dd>ZIP をダブルクリックで展開せず、Code Maker の Load → File で、ZIP のままえらびます。</dd>
+  </dl>
+  <div class="row-actions"><button class="primary" id="help-close" type="button">閉じる</button></div>
+ </div>
+</dialog>
+
+<script src="convert.js?v=1"></script>
+<script src="pyxel-pack.js?v=1"></script>
+<script src="app.js?v=1"></script>
+</body>
+</html>
