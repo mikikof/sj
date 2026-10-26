@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex">
+  <meta name="description" content="作りたいゲームを言葉にして、Gemini に頼む文を組み立てます。Pyxel Code Maker で動かすためのガイドです。">
+  <title>ゲームを言葉でつくる｜Pyxel × Gemini</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231f4a7d'/%3E%3Cpath d='M7 10h18v14H7z' fill='%23eaf1f9'/%3E%3Cpath d='M10 14h7v2h-7zm2-2h3v7h-3zm8 5h3v3h-3z' fill='%231f4a7d'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="app.css">
+  <script src="prompt.js" defer></script>
+  <script src="checker.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">本文へ</a>
+  <header class="site-header">
+    <a class="brand" href="#main">
+      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M4 8h24v18H4z" fill="#1f4a7d"/><path d="M8 15h10v3H8zm3-3h3v9h-3z" fill="#fff"/><path d="M22 18h3v3h-3z" fill="#ff9798"/></svg></span>
+      <span><b>ゲームを言葉でつくる</b><small id="school-label"></small></span>
+    </a>
+    <div class="header-actions">
+      <a class="tool-link" href="https://gemini.google.com/" target="_blank" rel="noopener noreferrer"><span class="tool-dot ai" aria-hidden="true"></span>Gemini ↗</a>
+      <a class="tool-link" href="https://kitao.dev/pyxel/code-maker/" target="_blank" rel="noopener noreferrer"><span class="tool-dot pyxel" aria-hidden="true"></span>Code Maker ↗</a>
+      <a class="tool-link" href="#help">困ったとき</a>
+    </div>
+  </header>
+  <main id="main">
+    <div class="intro">
+      <p class="eyebrow">Pyxel × Gemini</p>
+      <h1>どんなゲームにするか、<wbr>言葉にする。</h1>
+      <p>書いたアイデアに、Pyxel で動かすための決まりを足します。できた頼む文を Gemini に貼り、返ってきたコードを Code Maker で動かします。</p>
+    </div>
+    <nav class="steps" aria-label="このページの流れ">
+      <a href="#step-1"><span>01</span>ゲームを決める</a>
+      <a href="#step-2"><span>02</span>Gemini に頼む</a>
+      <a href="#step-3"><span>03</span>動かす</a>
+    </nav>
+    <div class="layout">
+      <section class="card step-1" id="step-1" aria-labelledby="title-1">
+        <div class="card-head"><span class="step-no">01</span><h2 id="title-1">どんなゲームにするか決める</h2></div>
+        <p class="muted">ジャンルを押すと、それぞれ遊びの芯が違う例が入ります。動きやルールは書き換えられます。「自由」は欄を空にします。書いた中身が少ないときは、Gemini が芯を考えます。</p>
+        <div class="genre-chips" role="group" aria-label="ゲームのジャンル">
+          <button type="button" data-genre="catch" aria-pressed="true">キャッチ</button>
+          <button type="button" data-genre="dodge" aria-pressed="false">よける</button>
+          <button type="button" data-genre="shoot" aria-pressed="false">シューティング</button>
+          <button type="button" data-genre="jump" aria-pressed="false">ジャンプ</button>
+          <button type="button" data-genre="free" aria-pressed="false">自由</button>
+        </div>
+        <div class="preset-meta"><p id="genre-status" class="small" role="status">キャッチの例が入っています。</p><button type="button" class="text-button" id="undo-genre" disabled>例を入れる前に戻す</button></div>
+        <form id="game-form">
+          <label class="switch-row" for="use-character"><input type="checkbox" id="use-character" checked><span>キャラのページで作った<br class="mobile-break">自分のキャラを使う</span></label>
+          <p id="character-note" class="field-help">キャラの ZIP を使います。絵と日本語のフォントも読み込みます。</p>
+          <div class="field"><label for="hero">主人公 <small>見た目・動かし方</small></label><textarea id="hero" rows="3"></textarea></div>
+          <div class="field"><label for="objects">相手やもの <small>何が・どこから・どう動く・いくつ</small></label><textarea id="objects" rows="3"></textarea></div>
+          <div class="field"><label for="rules">ルール <small>当たると何が起きる・点の増え方</small></label><textarea id="rules" rows="3"></textarea></div>
+          <div class="field"><label for="ending">終わり <small>勝ち・負けの条件</small></label><textarea id="ending" rows="2"></textarea></div>
+          <div class="field"><label for="difficulty">難しさ <small>時間とともに何がどう変わる</small></label><textarea id="difficulty" rows="2"></textarea></div>
+          <div class="field"><label for="extra">ほかに頼みたいこと <small>空のままでも使えます</small></label><textarea id="extra" rows="2" placeholder="例：夕焼けの空と雲を背景にしてください。"></textarea></div>
+        </form>
+      </section>
+      <section class="card step-2" id="step-2" aria-labelledby="title-2">
+        <div class="card-head"><span class="step-no">02</span><h2 id="title-2">Gemini に頼む</h2></div>
+        <p>下のボタンで頼む文をコピーし、Gemini の入力欄に貼って送ります。返事には <code>main.py</code> のコード・遊び方・このゲームの芯・入れた味付けが出ます。</p>
+        <div class="prompt-summary"><span class="mini-label">頼む文に入るもの</span><p>動かす決まり・土台・芯・味付け ＋<br>01 に書いたゲームのアイデア</p><span class="mode-label" id="mode-label">自分のキャラを使う</span></div>
+        <details id="prompt-details" class="prompt-box"><summary>できた頼む文を読む</summary><pre id="prompt-preview" class="prompt-preview" tabindex="0" aria-label="Gemini に頼む文の全文"></pre></details>
+        <div class="row-actions"><button type="button" class="primary" id="copy-prompt">頼む文をコピー</button><a class="secondary" href="https://gemini.google.com/" target="_blank" rel="noopener noreferrer">Gemini を開く ↗</a></div>
+        <p class="status" id="prompt-status" role="status" aria-live="polite"></p>
+        <div class="next-note"><b>返事が来たら、03 へ</b><p>Gemini の答えを丸ごと「貼る前の点検」に貼ると、コードの部分だけを取り出せます。</p></div>
+        <div class="followups">
+          <h3>続きの頼み方</h3>
+          <p class="small muted">ゲームを作った同じ Gemini の会話に貼ります。新しい会話なら、いまの <code>main.py</code> も一緒に貼ります。</p>
+          <details class="followup" id="error-details"><summary>エラーを直してもらう</summary><div class="detail-body">
+            <label for="error-input">エラーの最後の数行</label><p class="field-help">Code Maker の右の画面に出たエラーを、最後の行を含めて貼ります。</p>
+            <p id="font-error-note" class="field-help"><code>Failed to open file 'umplus_j10r.bdf'</code> または <code>Open your character ZIP first</code> が出たときは、コードは直さず、Gemini にも頼みません。先にキャラの ZIP を Load → File で開き、コードの欄を全部消してから、もう一度貼ります。</p>
+            <textarea id="error-input" rows="4" spellcheck="false" aria-describedby="font-error-note" placeholder="エラーの最後の数行をここに貼ります。"></textarea>
+            <details class="preview-details"><summary>続きの頼む文を読む</summary><pre id="error-preview" class="prompt-preview" tabindex="0"></pre></details>
+            <button type="button" id="copy-error" class="secondary">直してもらう文をコピー</button><p id="error-status" class="status" role="status" aria-live="polite"></p>
+          </div></details>
+          <details class="followup" id="feature-details"><summary>1 つだけ足してもらう</summary><div class="detail-body">
+            <label for="feature-input">足したいこと</label><p class="field-help">変えることを 1 つにすると、動きの違いを確かめやすくなります。</p>
+            <textarea id="feature-input" rows="3" placeholder="例：星を取ったときに、主人公の周りに丸を出してください。"></textarea>
+            <details class="preview-details"><summary>続きの頼む文を読む</summary><pre id="feature-preview" class="prompt-preview" tabindex="0"></pre></details>
+            <button type="button" id="copy-feature" class="secondary">足してもらう文をコピー</button><p id="feature-status" class="status" role="status" aria-live="polite"></p>
+          </div></details>
+        </div>
+      </section>
+      <section class="card step-3" id="step-3" aria-labelledby="title-3">
+        <div class="card-head"><span class="step-no">03</span><h2 id="title-3">Code Maker で動かす</h2></div>
+        <div class="run-grid">
+          <div class="checker-panel">
+            <h3>貼る前の点検</h3>
+            <label for="answer-input">Gemini の答え</label><p class="field-help">遊び方などの説明も含めて、答えを丸ごと貼れます。</p>
+            <textarea id="answer-input" rows="7" spellcheck="false" autocapitalize="off" placeholder="Gemini の答えをここに貼ります。"></textarea>
+            <button type="button" class="primary" id="check-code">コードを取り出して点検</button>
+            <div id="check-results" class="check-results" aria-live="polite"><p>点検すると、気になる所をここに表示します。</p></div>
+            <label for="code-output">取り出したコード</label><textarea id="code-output" rows="8" readonly spellcheck="false" aria-describedby="check-limit"></textarea>
+            <button type="button" class="secondary" id="copy-code" disabled>コードだけコピー</button><p id="code-status" class="status" role="status" aria-live="polite"></p>
+            <p id="check-limit" class="small muted">よくある書き方を調べる点検です。コードの実行はしません。0 件でも、Code Maker で動きを確かめます。</p>
+          </div>
+          <div class="run-panel">
+            <a class="primary" href="https://kitao.dev/pyxel/code-maker/" target="_blank" rel="noopener noreferrer">Code Maker を開く ↗</a>
+            <ol id="character-steps" class="open-steps">
+              <li><b>先にキャラの ZIP を開く。</b>Load → File で、<a href="../pyxel-chara/index.html">キャラのページ</a>から保存した ZIP を選びます。ZIP は展開せず、そのまま選びます。<small class="zip-first-note">この手順を飛ばすと、字のファイルがなく、ゲームが止まります。</small></li>
+              <li>左のコードの欄を押し、<b>全部選んで消します。</b><small>Mac は ⌘＋A、Windows は Ctrl＋A で全部を選べます。</small></li>
+              <li>取り出したコードを貼ります。<small>Mac は ⌘＋V、Windows は Ctrl＋V です。</small></li>
+              <li><b>Run</b> を押します。</li>
+              <li><b>右のゲーム画面を押します。</b>矢印キーと Z で遊び、終わったら Enter でもう一度遊べます。</li>
+              <li><b>Save → File</b> で ZIP を保存します。次はこの ZIP を Load → File で開きます。</li>
+            </ol>
+            <ol id="shapes-steps" class="open-steps" hidden>
+              <li>左のコードの欄に、取り出したコードを貼ります。すでにコードがあれば全部選んで置き換えます。</li>
+              <li><b>Run</b> を押します。</li>
+              <li>右のゲーム画面を押し、矢印キーと Z で遊びます。もう一度は Enter です。</li>
+              <li>終わる前に <b>Save → File</b> で ZIP を保存します。</li>
+            </ol>
+            <div class="save-note"><b>自動では保存されません。</b><p>動いたら Save → File で保存します。次に変える前にも保存しておくと、動いたところへ戻せます。</p></div>
+            <div class="try-note"><h3>動いたところから、1 つずつ</h3><p>主人公は動くか、点は増えるか、終わったあとにもう一度遊べるかを確かめます。変えたいことがあれば、02 の「続きの頼み方」を使います。</p></div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <section class="help-section" id="help" aria-labelledby="help-title">
+      <div class="help-head"><p class="eyebrow">HELP</p><h2 id="help-title">困ったとき</h2></div>
+      <div class="help-list">
+        <details data-help="keys"><summary>キーが効かない</summary><p>Code Maker の右のゲーム画面を押してから、矢印キーや Z を押します。左のコードの欄にカーソルがあると、ゲームにキーが届きません。</p></details>
+        <details data-help="missing-character-zip"><summary><code>Failed to open file 'umplus_j10r.bdf'</code> と出た／画面に <code>Open your character ZIP first</code> と出た</summary><p>字のファイルが入っていません。コードは直さず、Gemini にも頼みません。先にキャラの ZIP を Load → File で開き、コードの欄を全部消してから、もう一度貼ります。</p></details>
+        <details data-help="japanese"><summary>日本語が出ない</summary><p>キャラを使う場合は、キャラの ZIP を Load → File で読み込みます。<code>umplus_j10r.bdf</code> を読み込み、<code>pyxel.text</code> にフォントを渡すコードが必要です。キャラを使わない場合は、画面の文字を英語にします。02 の「1 つだけ足してもらう」に直したいことを書けます。</p></details>
+        <details data-help="character"><summary>キャラが出ない・消えた</summary><p>01 の「自分のキャラを使う」が入っているか、キャラの ZIP を読み込んだかを確かめます。<code>pyxel.load("my_resource.pyxres")</code> が必要です。画像 0 の 1 段目を書き換えるコードがあると、キャラの絵が消えます。絵が変わった場合は元の ZIP を読み込み直し、直したコードを貼ります。色 0 は透明です。</p></details>
+        <details data-help="error"><summary>エラーが出た</summary><p><code>Failed to open file 'umplus_j10r.bdf'</code> の場合は、上の同じエラーの項目にある手順で貼り直します。それ以外のエラーは、最後の行を含めた数行をコピーします。02 の「エラーを直してもらう」に貼り、できた文を同じ Gemini の会話に送ります。返ってきたコードの全文で、Code Maker のコードを置き換えます。</p></details>
+        <details data-help="save"><summary>保存するには（自動保存はありません）</summary><p>Code Maker の Save → File で ZIP を保存します。次は Load → File で、その ZIP を選びます。キャラの絵とコードをまとめて残せます。このページに書いたアイデアも自動保存されないので、必要なら頼む文をコピーして手元に残します。</p></details>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer">このページに書いた内容は、どこにも送られません。Gemini に頼む文は、自分でコピーして貼ります。</footer>
+  <noscript><p class="noscript">頼む文の組み立てと点検には JavaScript が必要です。</p></noscript>
+</body>
+</html>
