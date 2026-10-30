@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-src https://cdpn.io https://codepen.io; connect-src https://script.google.com https://script.googleusercontent.com">
+  <title>みんなの作品</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="app.css?v=2026-10-31-2">
+  <script src="config.js?v=2026-10-31-2" defer></script>
+  <script src="app.js?v=2026-10-31-2" defer></script>
+</head>
+<body>
+  <div id="network-status" class="network-status" role="status" aria-live="polite"></div>
+  <main id="login-view" class="login-layout">
+    <section class="login-intro" aria-labelledby="site-title">
+      <div class="brand-symbol" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+      <h1 id="site-title" tabindex="-1">みんなの作品</h1>
+      <p class="intro-copy">作品を見て、<wbr>感想や質問を<wbr>書けます。<br>組ごとに、<wbr>出席番号の順に<wbr>並んでいます。</p>
+      <div class="intro-labels" aria-hidden="true"><span>作品を見る</span><span>感想・質問</span><span>♥ いいね</span></div>
+    </section>
+    <section class="login-card" aria-labelledby="login-title">
+      <h2 id="login-title">ログイン</h2>
+      <p class="muted login-lead" data-teacher-text="管理用の合言葉を入れてください。">組と出席番号を<wbr>入れてください。<wbr>ほかの人の番号で<wbr>ログイン<wbr>しないでください。</p>
+      <form id="login-form">
+        <div id="student-fields" class="login-fields">
+          <label for="login-class">組<select id="login-class" name="cls" required><option value="" selected disabled>選んでください</option><option value="A">A組</option><option value="B">B組</option><option value="C">C組</option><option value="D">D組</option><option value="E">E組</option><option value="F">F組</option></select></label>
+          <label for="login-no">出席番号<input id="login-no" name="no" type="number" min="1" max="40" inputmode="numeric" autocomplete="off" required></label>
+        </div>
+        <button id="login-submit" class="primary wide" type="submit" disabled>ログイン</button>
+        <div id="login-code-fields" hidden>
+          <h3 id="login-code-title" hidden>合言葉を決める</h3>
+          <p id="login-code-help" class="muted" hidden>4 文字以上。ひらがなでも数字でもかまいません。忘れないようにメモしておいてください。</p>
+          <label id="login-entry-label" class="code-label" for="login-entry" hidden>入室コード<input id="login-entry" name="entry" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" disabled></label>
+          <p id="login-entry-help" class="muted" hidden>黒板に書いてあるコードを入れます。</p>
+          <label class="code-label" for="login-code">合言葉<input id="login-code" name="code" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" disabled></label>
+          <label class="code-visibility" for="login-code-visible"><input id="login-code-visible" type="checkbox" aria-controls="login-code" disabled><span id="login-code-visibility-label">合言葉を表示する</span></label>
+          <p id="login-code-note" class="muted" hidden>忘れたときは、直接伝えてください。5 回間違えると、10 分入れません。かなで決めた人は、「合言葉を表示する」にチェックを入れて入れてください。</p>
+          <button id="login-code-submit" class="primary wide" type="submit" disabled hidden>ログイン</button>
+        </div>
+        <div class="login-feedback"><p id="login-error" class="error-message" role="alert"></p><p id="login-wait" class="muted wait-note" role="status"></p></div>
+      </form>
+      <button id="teacher-toggle" class="text-button" type="button">管理用はこちら</button>
+      <p class="safety-note">ここは<wbr>同じ学年の人だけが<wbr>見る場所です。<wbr>コメントには名前が出ます。<wbr>人を傷つけることばは<wbr>書かないでください。</p>
+      <p class="muted shared-note">ほかの人と使う<wbr>パソコンでは、<wbr>終わったら<wbr>ログアウトを<wbr>押してください。</p>
+    </section>
+  </main>
+
+  <div id="board-view" hidden>
+    <a class="skip-link" href="#board-main">作品の一覧へ</a>
+    <header class="site-header">
+      <div class="header-brand"><span class="small-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><div><h1>みんなの作品</h1><p id="current-user" class="muted" tabindex="-1"></p></div></div>
+      <div class="header-actions"><button id="my-work" class="secondary" type="button">マイページ</button><button id="report-hide" class="quiet" type="button" hidden aria-pressed="false">知らせを隠す</button><button id="logout-button" class="quiet" type="button">ログアウト</button></div>
+      <div class="header-bottom"><p class="muted">作品は出席番号の順です。<wbr>作品を押すと、<wbr>大きく開いて、<wbr>感想や質問を書けます。</p><label class="preview-control"><input id="preview-toggle" type="checkbox" checked><span>プレビューを動かす<small class="preview-hint">動きが重いときは、<wbr>切ってください。</small></span></label></div>
+      <button id="new-comments" class="new-comments" type="button" hidden></button>
+      <button id="new-replies" class="new-comments" type="button" hidden></button>
+      <button id="report-alert" class="new-comments alert" type="button" hidden></button>
+    </header>
+    <p id="password-notice" class="password-notice" role="status" aria-live="polite" aria-atomic="true"></p>
+    <section id="vote-band" class="vote-band" aria-label="投票" hidden></section>
+    <p id="vote-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
+    <section id="my-votes" class="my-votes" aria-labelledby="my-votes-title" hidden></section>
+    <section id="scope-controls" class="scope-controls" aria-labelledby="scope-title" hidden><h2 id="scope-title">見せる範囲</h2><p id="scope-status"></p><button id="scope-toggle" class="secondary" type="button"></button><p id="scope-error" class="error-message" role="alert"></p></section>
+    <section id="password-controls" class="password-controls" aria-labelledby="password-title" hidden><div class="password-heading"><h2 id="password-title">合言葉</h2><button id="password-toggle" class="secondary" type="button" aria-expanded="false" aria-controls="password-content">開く</button></div><div id="password-content" hidden><div id="password-class-tabs" class="password-class-tabs" role="group" aria-label="合言葉を確認する組"></div><div class="password-summary-row"><p id="password-summary" role="status"></p><button id="password-refresh" class="secondary" type="button">更新</button></div><div id="password-list" class="password-list"></div><p id="password-error" class="error-message" role="alert"></p></div></section>
+    <section id="vote-controls" class="vote-controls" aria-label="投票の操作" hidden></section>
+    <nav id="class-tabs" class="class-tabs" aria-label="見る組"><a href="#A">A組</a><a href="#B">B組</a><a href="#C">C組</a><a href="#D">D組</a><a href="#E">E組</a><a href="#F">F組</a><a href="#all">学年ぜんたい</a></nav>
+    <main id="board-main" class="board-main" tabindex="-1"><p id="board-loading" class="empty-note" role="status">作品を読み込んでいます。</p><div id="work-groups"></div></main>
+    <main id="mypage-view" class="mypage" tabindex="-1" hidden><p id="mypage-identity" class="muted"></p><button id="mypage-back" class="secondary" type="button">一覧へ戻る</button><h2 id="mypage-title" tabindex="-1">マイページ</h2><section id="mypage-own" class="mypage-section" aria-label="自分の作品"></section><section class="mypage-section"><h3>もらったコメント</h3><div id="mypage-comments"></div></section><section class="mypage-section"><h3>自分のコメントに届いた返事</h3><div id="mypage-replies"></div></section></main>
+    <footer class="site-footer">コメントには名前が出ます。</footer>
+  </div>
+
+  <section id="vote-projector" class="vote-projector" aria-labelledby="vote-projector-title" hidden>
+    <header class="vote-projector-header"><h1 id="vote-projector-title" tabindex="-1"></h1><div class="vote-projector-actions"><button id="vote-projector-prev" class="secondary" type="button" aria-label="前の画面">戻る</button><button id="vote-projector-next" class="secondary" type="button" aria-label="次の画面">次へ</button><button id="vote-projector-fullscreen" class="secondary" type="button" hidden>全画面</button><button id="vote-projector-close" class="secondary" type="button">一覧へ戻る</button></div></header>
+    <main id="vote-projector-content" class="vote-projector-content"></main>
+    <p id="vote-projector-error" class="error-message" role="alert"></p>
+    <p class="vote-projector-help">← →・PageDown・PageUp・Space・Enter で画面を送ります。Esc で閉じます。作品をクリックしたあとは、マウスを作品の外へ出すと、キーで送れます。</p><canvas id="stage-confetti" aria-hidden="true" hidden></canvas>
+  </section>
+
+  <dialog id="stage-confirm" aria-labelledby="stage-confirm-title"><h2 id="stage-confirm-title">投票をしめきってから発表します。しめきりますか。</h2><div class="vote-control-actions"><button id="stage-confirm-cancel" class="secondary" type="button">やめる</button><button id="stage-confirm-end" class="primary" type="button">しめきって発表</button></div></dialog>
+  <dialog id="scope-confirm" aria-labelledby="scope-confirm-title"><h2 id="scope-confirm-title">学年ぜんたいを公開します。ほかの組の人にも、作品と名前が見えます。よろしいですか。</h2><div class="vote-control-actions"><button id="scope-confirm-cancel" class="secondary" type="button">やめる</button><button id="scope-confirm-publish" class="primary" type="button">公開する</button></div></dialog>
+  <dialog id="password-confirm" aria-labelledby="password-confirm-title" aria-describedby="password-confirm-text"><h2 id="password-confirm-title">合言葉のリセット</h2><p id="password-confirm-text"></p><p id="password-confirm-error" class="error-message" role="alert"></p><div class="password-confirm-actions"><button id="password-confirm-cancel" class="secondary" type="button">やめる</button><button id="password-confirm-reset" class="primary" type="button">リセットする</button></div></dialog>
+
+  <dialog id="work-dialog" aria-labelledby="work-title">
+    <div class="dialog-heading"><div class="dialog-name"><p id="work-position" class="muted"></p><h2 id="work-title" tabindex="-1"></h2></div><div class="dialog-actions"><button id="prev-work" class="icon-button" type="button" aria-label="前の作品">←</button><button id="next-work" class="icon-button" type="button" aria-label="次の作品">→</button><button id="close-work" class="secondary" type="button">閉じる</button></div></div>
+    <div id="dialog-network" class="network-status" role="status"></div>
+    <div class="dialog-body">
+      <section class="work-display" aria-label="作品のプレビュー"><div id="modal-preview" class="modal-preview"></div><div class="work-links"><a id="codepen-link" target="_blank" rel="noopener noreferrer">CodePen で開く ↗</a><p class="muted">うまく見えないときは、<wbr><span class="nb">「CodePen で開く」</span>を<wbr>押してください。<wbr>作品の中に、<wbr>合言葉は入力しないでください。</p></div><p class="keyboard-note muted">← → で<wbr>前後の作品、<wbr>Esc で閉じます。</p></section>
+      <section class="conversation" aria-label="コメント">
+        <div class="conversation-heading"><h3 id="comments-title" tabindex="-1">コメント <span class="comments-count"></span></h3><button id="like-button" class="like-button" aria-describedby="like-note" type="button" aria-pressed="false"></button></div>
+        <p id="like-note" class="muted"></p>
+        <p id="like-error" class="error-message" role="alert"></p>
+        <section id="vote-panel" class="vote-panel" aria-label="すごい！" hidden></section>
+        <p id="vote-note" class="vote-note muted" hidden></p>
+        <p id="vote-got" class="vote-got" hidden></p>
+        <p id="comments-status" class="sr-only" role="status"></p>
+        <div id="comments" class="comments"></div>
+        <form id="comment-form" class="comment-form">
+          <div class="kind-options" role="group" aria-label="書く種類"><button id="kind-thought" type="button" aria-pressed="true">感想</button><button id="kind-question" type="button" aria-pressed="false">質問</button></div>
+          <label for="comment-text"><span class="comment-label">コメント</span><textarea id="comment-text" rows="3" aria-describedby="comment-remaining comment-note" placeholder="作品を見て感じたことを書いてください。"></textarea></label>
+          <div class="comment-send-row"><span id="comment-remaining" class="muted">残り 200 字</span><button id="comment-send" class="primary" type="submit" disabled>送る</button></div>
+          <p id="comment-error" class="error-message" role="alert"></p>
+          <p id="comment-wait" class="muted wait-note" role="status"></p>
+          <p id="comment-note" class="muted">コメントには名前が出ます。<wbr>人を傷つけることばは<wbr>書かないでください。</p>
+          <p id="report-note" class="muted">困ったときは、<wbr><span class="nb">「知らせる」</span>を押すか、<wbr>直接伝えてください。</p>
+        </form>
+      </section>
+    </div>
+  </dialog>
+</body>
+</html>
