@@ -59,7 +59,7 @@
     token: readStorage('sj-review') || '', me: null, works: [], comments: [], rev: '',
     teacherLogin: false, studentPasscode: false, studentSetup: false, studentPassword: false, studentEntry: false, loginBusy: false, passwordNoticeTimer: null, view: 'A', modalKey: null, preview: initialPreview, busyBoard: false,
     queuedForce: false, lastFull: 0, lastPollAt: 0, pollTimer: null, serverPollMs: pollMs, hiddenAt: null, hiddenPreviewTimer: null, session: 0, writes: 0, sending: false, sendRun: 0,
-    kind: '感想', drafts: new Map(), cards: new Map(), likesBusy: new Set(), groupKey: '', commentsKey: '',
+    kind: '感想', drafts: new Map(), cards: new Map(), likesBusy: new Set(), likesPending: new Map(), groupKey: '', commentsKey: '',
     visible: new Set(), previewFrame: 0, previewTimer: null, previewQueue: [], nextPreviewAt: 0, returnFocus: null, hasBoard: false,
     vote: null, voteBusy: false, voteError: '', voteControlBusy: false, voteControlError: '', projector: null, projectionRun: 0,
     scope: 'class', scopeBusy: false, scopeError: '', myVotesKey: '', arrivals: new Map(), arrivalTimer: null,
@@ -341,7 +341,7 @@
     state.sending = false;
     state.sendRun += 1;
     state.pollFailures = 0;
-    state.likesBusy.clear();
+    state.likesBusy.clear(); state.likesPending.clear();
     state.groupKey = '';
     state.seenIds.clear();
     state.reportCounts.clear();
@@ -466,6 +466,11 @@
       if (!result.works.length && state.works.length && result.scope === state.scope) return;
       const works = result.works.map(validWork).filter(Boolean).sort((a, b) => a.cls.localeCompare(b.cls) || a.no - b.no);
       if (!works.length && state.works.length && result.scope === state.scope) return;
+      // 返事待ちのいいねは、押したあとの見た目のままにする（取り直した盤面が、押す前の数で上書きしないように）。
+      for (const work of works) {
+        const shown = state.likesPending.get(work.key);
+        if (shown && work.liked !== shown.liked) { work.liked = shown.liked; work.likes = Math.max(0, work.likes + shown.delta); }
+      }
       const previousVote = state.vote?.state, hadBoard = state.hasBoard;
       const scopeChanged = state.scope !== result.scope;
       const scrollPosition = [window.scrollX, window.scrollY];
@@ -866,6 +871,7 @@
     $('like-button').textContent = (work.liked ? '♥ いいね済み ' : '♥ いいね ') + work.likes;
     $('like-button').setAttribute('aria-pressed', String(work.liked));
     $('like-button').disabled = work.key === state.me.key || state.likesBusy.has(work.key);
+    $('like-button').classList.toggle('is-pending', state.likesPending.has(work.key));
     $('like-button').removeAttribute('title');
     $('like-note').textContent = work.key === state.me.key ? '自分の作品には、いいねを付けられません。' : 'いいねは、もう一度押すと取り消せます。';
     const likePhrases = $('like-note').textContent.match(/^(自分の作品には、|いいねは、)(いいねを|もう一度押すと)(付けられません。|取り消せます。)$/);
@@ -1490,8 +1496,18 @@
     const feedbackVersion = clearFailures();
     state.likesBusy.add(key);
     $('like-button').disabled = true;
+    // 受け取り口の返事は 3 秒ほどかかるので、押したらすぐ、押したあとの見た目にする。返事が来たら本当の数に置き換え、失敗したら元に戻す。
+    const first = state.works.find(item => item.key === key);
+    const before = first ? { liked: first.liked, likes: first.likes } : null;
+    if (first) {
+      const liked = !first.liked, likes = Math.max(0, first.likes + (liked ? 1 : -1));
+      state.likesPending.set(key, { liked, delta: likes - first.likes });
+      first.liked = liked; first.likes = likes; updateCard(first);
+      if (state.modalKey === key) renderModal(false);
+    }
     try {
       const result = await request('like', { to: key });
+      state.likesPending.delete(key);
       if (session !== state.session) return;
       state.writes += 1;
       const work = state.works.find(item => item.key === key);
@@ -1500,7 +1516,12 @@
       clearFailures(feedbackVersion);
       refreshBoard(true);
     } catch (error) {
+      const shown = state.likesPending.get(key);
+      state.likesPending.delete(key);
       if (session === state.session) {
+        // 押したあとの見た目のままにしていたので、元に戻す。
+        const work = state.works.find(item => item.key === key);
+        if (work && before && shown && work.liked === shown.liked) { work.liked = before.liked; work.likes = Math.max(0, work.likes - shown.delta); updateCard(work); if (state.modalKey === key) renderModal(false); }
         if (state.modalKey === key && feedbackVersion === state.feedbackVersion) showFailure($('like-error'), failureText('like', error));
         reconcileWrite(error);
       }
