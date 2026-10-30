@@ -14,9 +14,9 @@
   const loginLead = document.querySelector('.login-lead');
   const studentLead = Array.from(loginLead.childNodes, node => node.cloneNode(true));
   const LOGIN_TEXT = {
-    studentMismatch: '組・出席番号・合言葉のどれかが、合いません。配られた紙を見て、入れ直してください。続けて ' + LOGIN_FAIL_LIMIT + ' 回間違えると、10 分間ログインできなくなります。',
+    studentMismatch: '組・出席番号・パスワードのどれかが、合いません。配られた紙を見て、入れ直してください。続けて ' + LOGIN_FAIL_LIMIT + ' 回間違えると、10 分間ログインできなくなります。',
     studentLocked: 'この組・出席番号では、間違いが続いたため、10 分間ログインできません。10 分たってから、入れ直してください。紙をなくしたとき、10 分たっても、入れないときは、直接伝えてください。',
-    teacherMismatch: '合言葉が合いません。',
+    teacherMismatch: 'パスワードが合いません。',
     teacherLocked: '間違いが続いたため、10 分間ログインできません。10 分たってから、入れ直してください。'
   };
   const allFailureKinds = message => Object.fromEntries(['offline', 'timeout', 'http', 'broken'].map(kind => [kind, message]));
@@ -42,7 +42,7 @@
     report: allFailureKinds('知らせられませんでした。もう一度「知らせる」を押してください。'),
     vote_ctl: allFailureKinds('投票の状態を変えられませんでした。もう一度押してください。'),
     scope_set: allFailureKinds('見せる範囲を変えられませんでした。もう一度押してください。'),
-    password_list: allFailureKinds('合言葉の設定状況を読み込めませんでした。箱を開き直すと、もう一度読み込みます。'),
+    password_list: allFailureKinds('パスワードの設定状況を読み込めませんでした。箱を開き直すと、もう一度読み込みます。'),
     password_reset: allFailureKinds('リセットできたか確かめられませんでした。やめるを押して一覧を開き直し、設定状況を確認してください。'),
     vote_live: allFailureKinds('集計を更新できませんでした。次の更新で取り直します。'),
     vote_results: allFailureKinds('結果を読み込めませんでした。一覧へ戻って、もう一度開いてください。')
@@ -240,7 +240,8 @@
       if (!result || typeof result.ok !== 'boolean') throw failure('broken');
       if (!result.ok) {
         if (result.code === 'auth' && op !== 'login' && session === state.session) showLogin('ログインの期限が切れました。もう一度ログインしてください。');
-        const error = new Error(typeof result.why === 'string' ? result.why : '受け付けられませんでした。');
+        // 受け取り口の文は「合言葉」と書くことがある。画面の言い方（パスワード）にそろえる。
+        const error = new Error(typeof result.why === 'string' ? result.why.replace(/合言葉/g, 'パスワード') : '受け付けられませんでした。');
         error.api = true;
         error.code = result.code;
         error.loginMode = result.loginMode;
@@ -682,7 +683,18 @@
 
   function fitFrame(container) {
     const frame = container.querySelector('iframe');
-    if (frame) { const scale = 'scale(' + container.clientWidth / 800 + ')' + (cropTop ? ' translateY(-' + cropTop + 'px)' : ''); if (frame.style.transform !== scale) frame.style.transform = scale; }
+    if (!frame) return;
+    let scale = container.clientWidth / 800;
+    // 作品の窓の枠は、窓の高さに合わせて縦に伸びる。作品に渡す画面の高さも、枠の高さに合わせて増やす（縮尺は変えず、見える縦の範囲を広げる）。
+    // 枠が横に長いときは、縮尺を下げて、渡す画面が 800×600（これまでの大きさ）より小さくならないようにする。
+    if (container.id === 'modal-preview' && container.clientWidth > 0 && container.clientHeight > 0) {
+      scale = Math.min(scale, container.clientHeight / 600);
+      const width = Math.round(container.clientWidth / scale) + 'px', height = Math.min(3000, Math.ceil(container.clientHeight / scale)) + cropTop + 'px';
+      if (frame.style.width !== width) frame.style.width = width;
+      if (frame.style.height !== height) frame.style.height = height;
+    }
+    const transform = 'scale(' + scale + ')' + (cropTop ? ' translateY(-' + cropTop + 'px)' : '');
+    if (frame.style.transform !== transform) frame.style.transform = transform;
   }
 
   const observer = new IntersectionObserver(entries => {
@@ -1269,10 +1281,10 @@
     if (setup) $('login-code').setAttribute('aria-describedby', 'login-code-help');
     else $('login-code').removeAttribute('aria-describedby');
     $('login-code-visible').disabled = !needsCode;
-    $('login-code-visibility-label').textContent = setup ? 'かくす' : '合言葉を表示する';
+    $('login-code-visibility-label').textContent = setup ? 'かくす' : 'パスワードを表示する';
     $('login-code-submit').hidden = state.teacherLogin || !needsCode || !state.studentPassword;
     $('login-code-submit').disabled = !apiUrl || state.loginBusy || !needsCode;
-    $('login-code-submit').textContent = state.loginBusy ? '確認しています…' : setup ? '決めて、はじめる' : 'ログイン';
+    $('login-code-submit').textContent = state.loginBusy ? '確認しています…' : setup ? '決定して始める' : 'ログイン';
     $('login-title').textContent = state.teacherLogin ? '管理用のログイン' : 'ログイン';
     if (state.teacherLogin) loginLead.textContent = loginLead.dataset.teacherText;
     else loginLead.replaceChildren(...studentLead.map(node => node.cloneNode(true)));
@@ -1337,7 +1349,7 @@
       showBoard();
       await refreshBoard(true);
       if (setup && state.token === result.token) {
-        $('password-notice').textContent = '合言葉を決めました。次からはこの合言葉でログインします。';
+        $('password-notice').textContent = 'パスワードを決めました。次からはこのパスワードでログインします。';
         clearTimeout(state.passwordNoticeTimer);
         state.passwordNoticeTimer = setTimeout(() => { $('password-notice').textContent = ''; }, 7000);
       }
@@ -1369,7 +1381,7 @@
       }
       const prefix = teacherLogin ? 'teacher' : 'student';
       const text = waiting ? error.message : password && error.api && error.code === 'locked'
-        ? 'この組・出席番号では、間違いが続いたため、10 分間ログインできません。10 分たってから、入れ直してください。合言葉を忘れたときは、直接伝えてください。'
+        ? 'この組・出席番号では、間違いが続いたため、10 分間ログインできません。10 分たってから、入れ直してください。パスワードを忘れたときは、直接伝えてください。'
         : needsCode && !password && error.api && ['auth', 'bad', 'locked', 'mismatch'].includes(error.code)
         ? LOGIN_TEXT[prefix + (error.code === 'locked' ? 'Locked' : 'Mismatch')]
         : failureText('login', error);
@@ -1569,10 +1581,10 @@
       row.append(identity, textElement('span', 'password-state', person.set ? '設定済み' : 'まだ'));
       const button = textElement('button', 'secondary', 'リセット'); button.type = 'button';
       button.dataset.passwordReset = String(person.no); button.disabled = state.passwordBusy || state.passwordResetBusy;
-      button.setAttribute('aria-label', state.passwordClass + '組 ' + person.no + '番 ' + person.name + 'の合言葉をリセット');
+      button.setAttribute('aria-label', state.passwordClass + '組 ' + person.no + '番 ' + person.name + 'のパスワードをリセット');
       button.onclick = event => {
         state.passwordReset = {cls:state.passwordClass, no:person.no}; state.passwordReturnFocus = event.currentTarget;
-        setText($('password-confirm-text'), state.passwordClass + '組 ' + person.no + '番 ' + person.name + ' の合言葉をリセットします。本人は、次のログインで決め直します。');
+        setText($('password-confirm-text'), state.passwordClass + '組 ' + person.no + '番 ' + person.name + ' のパスワードをリセットします。本人は、次のログインで決め直します。');
         setText($('password-confirm-error'), '');
         $('password-confirm').showModal(); $('password-confirm-cancel').focus();
       };

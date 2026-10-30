@@ -8,9 +8,9 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-src https://cdpn.io https://codepen.io; connect-src https://script.google.com https://script.googleusercontent.com">
   <title>みんなの作品</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="app.css?v=2026-10-31-2">
-  <script src="config.js?v=2026-10-31-2" defer></script>
-  <script src="app.js?v=2026-10-31-2" defer></script>
+  <link rel="stylesheet" href="app.css?v=2026-10-31-3">
+  <script src="config.js?v=2026-10-31-3" defer></script>
+  <script src="app.js?v=2026-10-31-3" defer></script>
 </head>
 <body>
   <div id="network-status" class="network-status" role="status" aria-live="polite"></div>
@@ -23,7 +23,7 @@
     </section>
     <section class="login-card" aria-labelledby="login-title">
       <h2 id="login-title">ログイン</h2>
-      <p class="muted login-lead" data-teacher-text="管理用の合言葉を入れてください。">組と出席番号を<wbr>入れてください。<wbr>ほかの人の番号で<wbr>ログイン<wbr>しないでください。</p>
+      <p class="muted login-lead" data-teacher-text="管理用のパスワードを入れてください。">組と出席番号を<wbr>入れてください。<wbr>ほかの人の番号で<wbr>ログイン<wbr>しないでください。</p>
       <form id="login-form">
         <div id="student-fields" class="login-fields">
           <label for="login-class">組<select id="login-class" name="cls" required><option value="" selected disabled>選んでください</option><option value="A">A組</option><option value="B">B組</option><option value="C">C組</option><option value="D">D組</option><option value="E">E組</option><option value="F">F組</option></select></label>
@@ -31,13 +31,13 @@
         </div>
         <button id="login-submit" class="primary wide" type="submit" disabled>ログイン</button>
         <div id="login-code-fields" hidden>
-          <h3 id="login-code-title" hidden>合言葉を決める</h3>
+          <h3 id="login-code-title" hidden>パスワードを決める</h3>
           <p id="login-code-help" class="muted" hidden>4 文字以上。ひらがなでも数字でもかまいません。忘れないようにメモしておいてください。</p>
           <label id="login-entry-label" class="code-label" for="login-entry" hidden>入室コード<input id="login-entry" name="entry" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" disabled></label>
           <p id="login-entry-help" class="muted" hidden>黒板に書いてあるコードを入れます。</p>
-          <label class="code-label" for="login-code">合言葉<input id="login-code" name="code" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" disabled></label>
-          <label class="code-visibility" for="login-code-visible"><input id="login-code-visible" type="checkbox" aria-controls="login-code" disabled><span id="login-code-visibility-label">合言葉を表示する</span></label>
-          <p id="login-code-note" class="muted" hidden>忘れたときは、直接伝えてください。5 回間違えると、10 分入れません。かなで決めた人は、「合言葉を表示する」にチェックを入れて入れてください。</p>
+          <label class="code-label" for="login-code">パスワード<input id="login-code" name="code" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" disabled></label>
+          <label class="code-visibility" for="login-code-visible"><input id="login-code-visible" type="checkbox" aria-controls="login-code" disabled><span id="login-code-visibility-label">パスワードを表示する</span></label>
+          <p id="login-code-note" class="muted" hidden>忘れたときは、直接伝えてください。5 回間違えると、10 分入れません。かなで決めた人は、「パスワードを表示する」にチェックを入れて入れてください。</p>
           <button id="login-code-submit" class="primary wide" type="submit" disabled hidden>ログイン</button>
         </div>
         <div class="login-feedback"><p id="login-error" class="error-message" role="alert"></p><p id="login-wait" class="muted wait-note" role="status"></p></div>
@@ -63,7 +63,7 @@
     <p id="vote-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
     <section id="my-votes" class="my-votes" aria-labelledby="my-votes-title" hidden></section>
     <section id="scope-controls" class="scope-controls" aria-labelledby="scope-title" hidden><h2 id="scope-title">見せる範囲</h2><p id="scope-status"></p><button id="scope-toggle" class="secondary" type="button"></button><p id="scope-error" class="error-message" role="alert"></p></section>
-    <section id="password-controls" class="password-controls" aria-labelledby="password-title" hidden><div class="password-heading"><h2 id="password-title">合言葉</h2><button id="password-toggle" class="secondary" type="button" aria-expanded="false" aria-controls="password-content">開く</button></div><div id="password-content" hidden><div id="password-class-tabs" class="password-class-tabs" role="group" aria-label="合言葉を確認する組"></div><div class="password-summary-row"><p id="password-summary" role="status"></p><button id="password-refresh" class="secondary" type="button">更新</button></div><div id="password-list" class="password-list"></div><p id="password-error" class="error-message" role="alert"></p></div></section>
+    <section id="password-controls" class="password-controls" aria-labelledby="password-title" hidden><div class="password-heading"><h2 id="password-title">パスワード</h2><button id="password-toggle" class="secondary" type="button" aria-expanded="false" aria-controls="password-content">開く</button></div><div id="password-content" hidden><div id="password-class-tabs" class="password-class-tabs" role="group" aria-label="パスワードを確認する組"></div><div class="password-summary-row"><p id="password-summary" role="status"></p><button id="password-refresh" class="secondary" type="button">更新</button></div><div id="password-list" class="password-list"></div><p id="password-error" class="error-message" role="alert"></p></div></section>
     <section id="vote-controls" class="vote-controls" aria-label="投票の操作" hidden></section>
     <nav id="class-tabs" class="class-tabs" aria-label="見る組"><a href="#A">A組</a><a href="#B">B組</a><a href="#C">C組</a><a href="#D">D組</a><a href="#E">E組</a><a href="#F">F組</a><a href="#all">学年ぜんたい</a></nav>
     <main id="board-main" class="board-main" tabindex="-1"><p id="board-loading" class="empty-note" role="status">作品を読み込んでいます。</p><div id="work-groups"></div></main>
@@ -80,13 +80,13 @@
 
   <dialog id="stage-confirm" aria-labelledby="stage-confirm-title"><h2 id="stage-confirm-title">投票をしめきってから発表します。しめきりますか。</h2><div class="vote-control-actions"><button id="stage-confirm-cancel" class="secondary" type="button">やめる</button><button id="stage-confirm-end" class="primary" type="button">しめきって発表</button></div></dialog>
   <dialog id="scope-confirm" aria-labelledby="scope-confirm-title"><h2 id="scope-confirm-title">学年ぜんたいを公開します。ほかの組の人にも、作品と名前が見えます。よろしいですか。</h2><div class="vote-control-actions"><button id="scope-confirm-cancel" class="secondary" type="button">やめる</button><button id="scope-confirm-publish" class="primary" type="button">公開する</button></div></dialog>
-  <dialog id="password-confirm" aria-labelledby="password-confirm-title" aria-describedby="password-confirm-text"><h2 id="password-confirm-title">合言葉のリセット</h2><p id="password-confirm-text"></p><p id="password-confirm-error" class="error-message" role="alert"></p><div class="password-confirm-actions"><button id="password-confirm-cancel" class="secondary" type="button">やめる</button><button id="password-confirm-reset" class="primary" type="button">リセットする</button></div></dialog>
+  <dialog id="password-confirm" aria-labelledby="password-confirm-title" aria-describedby="password-confirm-text"><h2 id="password-confirm-title">パスワードのリセット</h2><p id="password-confirm-text"></p><p id="password-confirm-error" class="error-message" role="alert"></p><div class="password-confirm-actions"><button id="password-confirm-cancel" class="secondary" type="button">やめる</button><button id="password-confirm-reset" class="primary" type="button">リセットする</button></div></dialog>
 
   <dialog id="work-dialog" aria-labelledby="work-title">
     <div class="dialog-heading"><div class="dialog-name"><p id="work-position" class="muted"></p><h2 id="work-title" tabindex="-1"></h2></div><div class="dialog-actions"><button id="prev-work" class="icon-button" type="button" aria-label="前の作品">←</button><button id="next-work" class="icon-button" type="button" aria-label="次の作品">→</button><button id="close-work" class="secondary" type="button">閉じる</button></div></div>
     <div id="dialog-network" class="network-status" role="status"></div>
     <div class="dialog-body">
-      <section class="work-display" aria-label="作品のプレビュー"><div id="modal-preview" class="modal-preview"></div><div class="work-links"><a id="codepen-link" target="_blank" rel="noopener noreferrer">CodePen で開く ↗</a><p class="muted">うまく見えないときは、<wbr><span class="nb">「CodePen で開く」</span>を<wbr>押してください。<wbr>作品の中に、<wbr>合言葉は入力しないでください。</p></div><p class="keyboard-note muted">← → で<wbr>前後の作品、<wbr>Esc で閉じます。</p></section>
+      <section class="work-display" aria-label="作品のプレビュー"><div id="modal-preview" class="modal-preview"></div><div class="work-links"><a id="codepen-link" target="_blank" rel="noopener noreferrer">CodePen で開く ↗</a><p class="muted">うまく見えないときは、<wbr><span class="nb">「CodePen で開く」</span>を<wbr>押してください。<wbr>作品の中に、<wbr>パスワードは<wbr>入力しないでください。</p></div><p class="keyboard-note muted">← → で<wbr>前後の作品、<wbr>Esc で閉じます。</p></section>
       <section class="conversation" aria-label="コメント">
         <div class="conversation-heading"><h3 id="comments-title" tabindex="-1">コメント <span class="comments-count"></span></h3><button id="like-button" class="like-button" aria-describedby="like-note" type="button" aria-pressed="false"></button></div>
         <p id="like-note" class="muted"></p>

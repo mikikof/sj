@@ -230,7 +230,12 @@ body.hide-reports .comment.reported { background: none; border-left: 0; padding:
   .comments { flex: 1 1 auto; min-height: 96px; max-height: none; }
   .comment-form { flex: none; padding: 12px 20px 14px; }
   .kind-options { margin-bottom: 8px; }
-  .modal-preview { width: min(100%, calc((100dvh - 330px) * 4 / 3)); }
+  /* 作品の窓: プレビューは、列の高さのいっぱいまで伸ばす（枠の高さに合わせて、作品の見える縦の範囲が増える。app.js の fitFrame） */
+  .work-display { display: flex; flex-direction: column; padding: 16px 22px 14px; }
+  .modal-preview { flex: 1 1 280px; min-height: 200px; aspect-ratio: auto; width: 100%; }
+  .work-links, .keyboard-note { flex: none; }
+  .work-links { margin-top: 10px; gap: 4px 9px; }
+  .keyboard-note { margin-top: 4px; }
   .comment { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 10px; }
   .comment-head { grid-column: 1; grid-row: 1; }
   .comment-time { grid-column: 2; grid-row: 1; margin-top: 0; white-space: nowrap; }
@@ -307,7 +312,9 @@ body.hide-reports .comment.reported { background: none; border-left: 0; padding:
   #work-title { font-size: 20px; }
   .dialog-body { flex: 1 1 auto; min-height: 0; grid-template-columns: minmax(0, 1fr) minmax(260px, 1fr); grid-template-rows: minmax(0, 1fr); }
   .work-display { min-height: 0; overflow-y: auto; }
-  .modal-preview { width: min(100%, calc((100dvh - 150px) * 4 / 3)); }
+  .work-display { display: flex; flex-direction: column; }
+  .modal-preview { flex: 1 1 160px; min-height: 160px; aspect-ratio: auto; width: 100%; }
+  .work-links, .keyboard-note { flex: none; }
   .conversation { min-height: 0; overflow-y: auto; border-left: 1px solid var(--line); border-top: 0; }
   .comments { max-height: none; overflow: visible; flex: none; }
   .conversation-heading { flex-wrap: wrap; }
@@ -338,7 +345,6 @@ body.hide-reports .comment.reported { background: none; border-left: 0; padding:
   dialog:has(#dialog-network:not(:empty)) #comment-error:not(:empty) { margin-top: 4px; line-height: 1.4; }
   dialog:has(#dialog-network:not(:empty)) #comment-note { margin-top: 8px; line-height: 1.5; }
   dialog:has(#dialog-network:not(:empty)) #report-note { margin-top: 4px; line-height: 1.5; }
-  dialog:has(#dialog-network:not(:empty)) .modal-preview { width: min(100%, calc((100dvh - 356px) * 4 / 3)); }
 }
 @media (min-width: 851px) and (max-width: 1100px) {
   dialog:has(#dialog-network:not(:empty)) .dialog-body { grid-template-columns: minmax(0, 1fr) 510px; }
@@ -385,7 +391,8 @@ body.hide-reports .comment.reported { background: none; border-left: 0; padding:
   dialog { max-height: calc(100dvh - 16px); }
   dialog[open] { height: calc(100dvh - 16px); }
   .keyboard-note { display: none; }
-  .modal-preview { width: min(100%, calc((100dvh - 256px) * 4 / 3)); }
+  .modal-preview { flex-basis: 220px; }
+  .dialog-name { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
   .conversation-heading { padding-top: 6px; padding-bottom: 6px; }
   .comment-form textarea { height: 56px; min-height: 56px; }
   #comment-note { margin-top: 6px; line-height: 1.45; }
