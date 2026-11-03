@@ -1,1 +1,1 @@
-window.REVIEW_CONFIG = { API_URL: 'https://script.google.com/macros/s/AKfycby0QpBZ7EOkYg4YNJqL9Y0wtDE2FyPwVl2cDVFkXWzplMPzL3MpJkroRU9rO-B21n3L/exec', POLL_MS: 10000, TIMEOUT_MS: 26000, PREVIEW_DEFAULT: true, PREVIEW_CROP_TOP: 104 };
+window.REVIEW_CONFIG = { API_URL: 'https://works-review.153-115-26-26.sslip.io/api', POLL_MS: 3000, TIMEOUT_MS: 26000, PREVIEW_DEFAULT: true, PREVIEW_CROP_TOP: 104 };

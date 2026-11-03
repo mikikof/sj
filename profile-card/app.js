@@ -4,7 +4,7 @@ const $ = s => document.querySelector(s);
 const $$ = s => Array.from(document.querySelectorAll(s));
 const KEY = 'shinagawa-profile-lab-v1';
 /* 04 提出する: 先生のスプレッドシートの受け取り口（Apps Script の /exec）。空のあいだは送らずに知らせるだけ */
-const SUBMIT_URL='https://script.google.com/macros/s/AKfycby0QpBZ7EOkYg4YNJqL9Y0wtDE2FyPwVl2cDVFkXWzplMPzL3MpJkroRU9rO-B21n3L/exec';
+const SUBMIT_URL='https://works-review.153-115-26-26.sslip.io/api';
 const SENT_KEY = 'shinagawa-profile-lab-sent-v1';
 const titles = ['準備する','コードを貼る','AIに頼む','提出する'];
 const examples = {
