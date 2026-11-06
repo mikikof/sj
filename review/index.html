@@ -8,9 +8,9 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-src https://cdpn.io https://codepen.io; connect-src https://script.google.com https://script.googleusercontent.com https://works-review.153-115-26-26.sslip.io">
   <title>みんなの作品</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="app.css?v=2026-11-03-1">
-  <script src="config.js?v=2026-11-03-1" defer></script>
-  <script src="app.js?v=2026-11-03-1" defer></script>
+  <link rel="stylesheet" href="app.css?v=2026-11-06-1">
+  <script src="config.js?v=2026-11-06-1" defer></script>
+  <script src="app.js?v=2026-11-06-1" defer></script>
 </head>
 <body>
   <div id="network-status" class="network-status" role="status" aria-live="polite"></div>
@@ -67,7 +67,7 @@
     <section id="vote-controls" class="vote-controls" aria-label="投票の操作" hidden></section>
     <nav id="class-tabs" class="class-tabs" aria-label="見る組"><a href="#A">A組</a><a href="#B">B組</a><a href="#C">C組</a><a href="#D">D組</a><a href="#E">E組</a><a href="#F">F組</a><a href="#all">学年ぜんたい</a></nav>
     <main id="board-main" class="board-main" tabindex="-1"><p id="board-loading" class="empty-note" role="status">作品を読み込んでいます。</p><div id="work-groups"></div></main>
-    <main id="mypage-view" class="mypage" tabindex="-1" hidden><p id="mypage-identity" class="muted"></p><button id="mypage-back" class="secondary" type="button">一覧へ戻る</button><h2 id="mypage-title" tabindex="-1">マイページ</h2><section id="mypage-own" class="mypage-section" aria-label="自分の作品"></section><section class="mypage-section"><h3>もらったコメント</h3><div id="mypage-comments"></div></section><section class="mypage-section"><h3>自分のコメントに届いた返事</h3><div id="mypage-replies"></div></section></main>
+    <main id="mypage-view" class="mypage" tabindex="-1" hidden><p id="mypage-identity" class="muted"></p><button id="mypage-back" class="secondary" type="button">一覧へ戻る</button><h2 id="mypage-title" tabindex="-1">マイページ</h2><section id="mypage-own" class="mypage-section" aria-label="自分の作品"></section><section id="mypage-received" class="mypage-section"><h3>もらったコメント</h3><div id="mypage-comments"></div></section><section id="mypage-inbox" class="mypage-section"><h3 id="mypage-replies-title">自分のコメントに届いた返事</h3><div id="mypage-reply-tools" class="mypage-reply-tools" hidden><p id="mypage-reply-summary" role="status"></p><div id="mypage-reply-classes" class="password-class-tabs" role="group" aria-label="返事を見る組"></div></div><div id="mypage-replies"></div></section></main>
     <footer class="site-footer">コメントには名前が出ます。</footer>
   </div>
 

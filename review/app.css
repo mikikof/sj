@@ -500,6 +500,19 @@ body.hide-reports .comment.reported { background: none; border-left: 0; padding:
 .mypage-reply h4 { font-size: 16px; margin: 0 0 8px; }
 .reply-original { color: var(--muted); font-size: 14px; margin-bottom: 14px; overflow-wrap: anywhere; }
 .mypage-reply .comment { margin-left: 16px; padding-left: 14px; border-left: 2px solid #dce6df; }
+.mypage-reply-tools { margin: -6px 0 20px; }
+.mypage-reply-tools p { margin: 0; color: var(--muted); font-size: 16px; }
+.mypage-reply-tools .password-class-tabs { margin: 10px 0 0; }
+#mypage-reply-classes button[aria-pressed="true"] { color: #fff; background: var(--navy); border-color: var(--navy); }
+.teacher-reply-head { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin-bottom: 8px; }
+.teacher-reply-head h4 { margin: 0; overflow-wrap: anywhere; }
+.mypage-reply.teacher-reply .comment { margin-left: 0; padding-left: 0; border-left: 0; }
+.teacher-reply > button { margin-top: 6px; }
+.new-tag { display: inline-block; border-radius: 5px; padding: 0 7px; background: var(--mint-soft); color: var(--mint-deep); font-size: 14px; font-weight: 700; }
+.comment-head .new-tag { margin-left: 2px; }
+.comment-reply.is-new { background: #f3faf7; border-radius: 8px; padding: 8px 10px; }
+#board-view.teacher-mypage #vote-band, #board-view.teacher-mypage #my-votes, #board-view.teacher-mypage #scope-controls, #board-view.teacher-mypage #password-controls, #board-view.teacher-mypage #vote-controls { display: none !important; }
+@media (forced-colors: active) { #mypage-reply-classes button[aria-pressed="true"] { outline: 3px solid Highlight; outline-offset: -3px; } }
 .vote-panel-status { min-height: 44px; gap: 12px; }
 .vote-stars { display: flex; gap: 6px; }
 .vote-star { width: 44px; height: 44px; padding: 0; border: 1px solid #a99059; border-radius: 7px; background: #fff; color: #77521d; font-size: 29px; line-height: 1; }

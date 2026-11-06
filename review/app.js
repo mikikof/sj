@@ -64,7 +64,7 @@
     vote: null, voteBusy: false, voteError: '', voteControlBusy: false, voteControlError: '', projector: null, projectionRun: 0,
     scope: 'class', scopeBusy: false, scopeError: '', myVotesKey: '', arrivals: new Map(), arrivalTimer: null,
     passwordOpen: false, passwordClass: 'A', passwordPeople: null, passwordBusy: false, passwordRun: 0, passwordError: '', passwordReset: null, passwordResetBusy: false, passwordReturnFocus: null,
-    mypageKey: '', replyDrafts: new Map(), replyBusy: new Set(), mypageReturn: 'A', live: null, liveBusy: false, liveTimer: null, liveClass: 'A', liveShow: false, hideReports: false, liveStarted: false, liveError: '', confettiFrame: 0, projectionFocus: null,
+    mypageKey: '', teacherReplyClass: 'all', teacherSeenAt: null, replyDrafts: new Map(), replyBusy: new Set(), mypageReturn: 'A', live: null, liveBusy: false, liveTimer: null, liveClass: 'A', liveShow: false, hideReports: false, liveStarted: false, liveError: '', confettiFrame: 0, projectionFocus: null,
     seenIds: new Map(), announceFrame: 0, loginWaitTimer: null, commentWaitTimer: null, reportCounts: new Map(), reported: new Set(), reportCursor: null, feedbackVersion: 0, pollFailures: 0
   };
 
@@ -284,8 +284,8 @@
   function currentView() {
     const value = location.hash.slice(1);
     const available = availableClasses();
-    if (!state.hasBoard) return value === 'me' && state.me && !state.me.teacher ? 'me' : classes.includes(value) || value === 'all' ? value : classes.includes(state.me?.cls) ? state.me.cls : 'A';
-    if (value === 'me' && state.me && !state.me.teacher) return 'me';
+    if (!state.hasBoard) return value === 'me' && state.me ? 'me' : classes.includes(value) || value === 'all' ? value : classes.includes(state.me?.cls) ? state.me.cls : 'A';
+    if (value === 'me' && state.me) return 'me';
     if (classOnly()) return state.me.cls;
     if (value === 'all' && available.length > 1) return value;
     return available.includes(value) ? value : available.includes(state.me?.cls) ? state.me.cls : available[0] || 'A';
@@ -331,6 +331,7 @@
     $('mypage-identity').textContent = '';
     $('mypage-own').replaceChildren(); delete $('mypage-own').dataset.contentKey; $('mypage-comments').replaceChildren(); $('mypage-replies').replaceChildren();
     $('new-replies').hidden = true;
+    state.teacherReplyClass = 'all'; state.teacherSeenAt = null; $('mypage-reply-tools').hidden = true; $('mypage-reply-classes').replaceChildren(); $('mypage-reply-summary').textContent = '';
     state.voteBusy = false;
     state.voteError = '';
     state.voteControlBusy = false;
@@ -421,7 +422,7 @@
     document.body.classList.toggle('hide-reports', hide);
     $('report-hide').textContent = hide ? '知らせを出す' : '知らせを隠す'; $('report-hide').setAttribute('aria-pressed', String(hide));
   }
-  $('report-hide').addEventListener('click', () => { state.hideReports = !state.hideReports; applyHideReports(); });
+  $('report-hide').addEventListener('click', () => { state.hideReports = !state.hideReports; applyHideReports(); updateNotification(); });
 
   function showBoard() {
     const entering = $('board-view').hidden || !state.hasBoard;
@@ -429,7 +430,7 @@
     $('board-view').hidden = !!state.projector;
     $('board-view').classList.toggle('teacher-view', !!state.me.teacher);
     $('current-user').textContent = state.me.teacher ? '管理用でログインしています。' : state.me.cls + '組 ' + state.me.no + '番　' + state.me.name;
-    $('my-work').hidden = !!state.me.teacher;
+    $('my-work').hidden = false; $('my-work').textContent = state.me.teacher ? '管理用のマイページ' : 'マイページ';
     $('report-hide').hidden = !state.me.teacher; applyHideReports();
     $('password-controls').hidden = !state.me.teacher;
     if (!classes.includes(location.hash.slice(1)) && location.hash !== '#all' && location.hash !== '#me' && !(state.me.teacher && /^#vote-[A-F]$/.test(location.hash))) history.replaceState({}, '', '#' + currentView());
@@ -527,6 +528,8 @@
     $('board-main').hidden = state.view === 'me';
     $('mypage-view').hidden = state.view !== 'me';
     document.querySelector('.header-bottom').hidden = state.view === 'me';
+    $('board-view').classList.toggle('teacher-mypage', !!state.me?.teacher && state.view === 'me');
+    if (state.view !== 'me') state.teacherSeenAt = null;
     if (state.view !== 'me' && $('mypage-own').querySelector('iframe')) { $('mypage-own').querySelector('iframe').remove(); delete $('mypage-own').dataset.contentKey; state.mypageKey = ''; }
   }
 
@@ -1066,8 +1069,90 @@
     }
   }
 
+  // 管理用のコメント（自分が書いた、返信でないコメント）ごとに、届いた返事をまとめる。新しい返事が届いた物を上に。
+  function teacherReplyGroups() {
+    const mine = new Map(state.comments.filter(comment => comment.mine && !comment.replyTo).map(comment => [comment.id, comment]));
+    const groups = new Map();
+    for (const comment of state.comments) {
+      if (!comment.replyTo || !mine.has(comment.replyTo)) continue;
+      if (!groups.has(comment.replyTo)) groups.set(comment.replyTo, { parent: mine.get(comment.replyTo), replies: [] });
+      groups.get(comment.replyTo).replies.push(comment);
+    }
+    return Array.from(groups.values()).map(group => ({ ...group, latest: Math.max(...group.replies.map(reply => Number(reply.at) || 0)) }))
+      .sort((a, b) => b.latest - a.latest || a.parent.id.localeCompare(b.parent.id));
+  }
+
+  function workLabel(key) {
+    const work = state.works.find(item => item.key === key);
+    return work ? work.cls + '組 ' + work.no + '番 ' + work.name + 'の作品' : '作品';
+  }
+
+  function renderTeacherMypage() {
+    if (state.teacherSeenAt === null) state.teacherSeenAt = Number(seen[state.me.key + ':replies']) || 0;
+    const seenAt = state.teacherSeenAt, groups = teacherReplyGroups();
+    if (state.teacherReplyClass !== 'all' && !classes.includes(state.teacherReplyClass)) state.teacherReplyClass = 'all';
+    const cls = state.teacherReplyClass, shown = cls === 'all' ? groups : groups.filter(group => group.parent.to[0] === cls);
+    $('mypage-identity').textContent = '';
+    $('mypage-title').textContent = '管理用のマイページ';
+    $('mypage-own').hidden = true; $('mypage-received').hidden = true;
+    $('mypage-replies-title').textContent = '管理用のコメントに届いた返事';
+    $('mypage-reply-tools').hidden = false;
+    const tabs = $('mypage-reply-classes');
+    if (!tabs.childElementCount) for (const value of ['all', ...classes]) {
+      const button = textElement('button', 'secondary', ''); button.type = 'button'; button.dataset.cls = value;
+      button.addEventListener('click', () => { state.teacherReplyClass = value; renderMypage(); });
+      tabs.append(button);
+    }
+    for (const button of tabs.querySelectorAll('button')) {
+      const value = button.dataset.cls, count = value === 'all' ? groups.length : groups.filter(group => group.parent.to[0] === value).length;
+      const text = (value === 'all' ? 'すべて' : value + '組') + '（' + count + '）';
+      if (button.textContent !== text) button.textContent = text;
+      button.setAttribute('aria-pressed', String(value === cls));
+    }
+    const replyTotal = groups.reduce((sum, group) => sum + group.replies.length, 0);
+    const fresh = groups.reduce((sum, group) => sum + group.replies.filter(reply => Number(reply.at) > seenAt).length, 0);
+    // 句の切れ目でだけ折り返す（狭い幅で「返事 / 5 件」のように数と単位が離れないように）
+    const phrases = groups.length ? ['返事が届いた管理用のコメント ' + groups.length + ' 件', '・返事 ' + replyTotal + ' 件', ...(fresh ? ['（新しい返事 ' + fresh + ' 件）'] : [])] : [];
+    if ($('mypage-reply-summary').textContent !== phrases.join('')) {
+      $('mypage-reply-summary').replaceChildren();
+      phrases.forEach((phrase, index) => { if (index) $('mypage-reply-summary').append(document.createElement('wbr')); $('mypage-reply-summary').append(textElement('span', 'nb', phrase)); });
+    }
+    const signature = JSON.stringify(['teacher', cls, seenAt, shown.map(group => [group.parent, group.replies, workLabel(group.parent.to)])]);
+    if (signature !== state.mypageKey) {
+      state.mypageKey = signature;
+      const inbox = $('mypage-replies');
+      const oldErrors = new Map(Array.from(inbox.querySelectorAll('.comment'), article => [article.dataset.id, article.querySelector('.comment-error')?.textContent || '']));
+      preserveCommentFocus(inbox, () => {
+        inbox.replaceChildren();
+        for (const group of shown) {
+          const section = textElement('section', 'mypage-reply teacher-reply');
+          const head = textElement('div', 'teacher-reply-head');
+          head.append(textElement('h4', '', workLabel(group.parent.to)));
+          const count = group.replies.filter(reply => Number(reply.at) > seenAt).length;
+          if (count) head.append(textElement('span', 'new-tag', '新しい返事 ' + count + ' 件'));
+          const article = createComment(group.parent, 'mypage-replies', oldErrors);
+          for (const nested of article.querySelectorAll('.comment-reply')) {
+            const reply = group.replies.find(item => item.id === nested.dataset.id);
+            if (reply && Number(reply.at) > seenAt) { nested.classList.add('is-new'); nested.querySelector('.comment-head')?.append(textElement('span', 'new-tag', '新しい')); }
+          }
+          const open = textElement('button', 'secondary', '作品を開く'); open.type = 'button'; open.addEventListener('click', () => openModal(group.parent.to));
+          section.append(head, article, open); inbox.append(section);
+        }
+        if (!shown.length) inbox.append(textElement('p', 'muted', groups.length ? 'この組には、まだ返事がありません。' : '返事は、まだありません。'));
+      });
+    }
+    if (!state.modalKey) {
+      const latest = groups.reduce((max, group) => Math.max(max, group.latest), Number(seen[state.me.key + ':replies']) || 0);
+      if (latest !== Number(seen[state.me.key + ':replies'])) { seen[state.me.key + ':replies'] = latest; writeStorage('sj-review-seen', JSON.stringify(seen)); }
+    }
+    updateNotification();
+  }
+
   function renderMypage() {
-    if (!state.me || state.me.teacher || state.view !== 'me') return;
+    if (!state.me || state.view !== 'me') return;
+    if (state.me.teacher) { renderTeacherMypage(); return; }
+    $('mypage-title').textContent = 'マイページ'; $('mypage-own').hidden = false; $('mypage-received').hidden = false;
+    $('mypage-replies-title').textContent = '自分のコメントに届いた返事'; $('mypage-reply-tools').hidden = true;
     $('mypage-identity').textContent = state.me.cls + '組 ' + state.me.no + '番 ' + state.me.name + ' としてログインしています。ちがう人のときは、ログアウトしてください。';
     const own = state.works.find(work => work.key === state.me.key);
     const received = state.comments.filter(comment => comment.to === state.me.key && !comment.replyTo).sort((a,b) => b.at-a.at);
@@ -1215,7 +1300,16 @@
     const reportCount = Array.from(state.reportCounts.values()).reduce((sum, count) => sum + count, 0);
     $('report-alert').hidden = !state.me || !state.me.teacher || !reportCount;
     $('report-alert').textContent = reportCount ? '知らせのあるコメントが ' + reportCount + ' 件（' + state.reportCounts.size + ' 作品）あります。押すと開きます。' : '';
-    if (!state.me || state.me.teacher) { $('new-comments').hidden = true; $('new-replies').hidden = true; return; }
+    if (!state.me) { $('new-comments').hidden = true; $('new-replies').hidden = true; return; }
+    if (state.me.teacher) {
+      $('new-comments').hidden = true;
+      const ownComments = new Set(state.comments.filter(comment => comment.mine && !comment.replyTo).map(comment => comment.id));
+      const fresh = state.hideReports ? 0 : state.comments.filter(comment => comment.replyTo && ownComments.has(comment.replyTo) && Number(comment.at) > (Number(seen[state.me.key + ':replies']) || 0)).length;
+      $('new-replies').hidden = !fresh;
+      $('new-replies').replaceChildren();
+      if (fresh) $('new-replies').append(textElement('span', 'nb', '管理用のコメントに'), document.createElement('wbr'), textElement('span', 'nb', '返事が届いています（' + fresh + '件）'));
+      return;
+    }
     const last = Number(seen[state.me.key]) || 0;
     const count = state.comments.filter(comment => comment.to === state.me.key && !comment.replyTo && !comment.mine && Number(comment.at) > last).length;
     $('new-comments').hidden = !count;
@@ -1234,7 +1328,7 @@
   }
 
   function openOwnWork() {
-    if (!state.me || state.me.teacher) return;
+    if (!state.me) return;
     state.mypageReturn = state.view !== 'me' ? state.view : state.mypageReturn;
     location.hash = 'me';
   }
@@ -1352,6 +1446,8 @@
       $('login-code').value = '';
       $('login-code').type = 'password';
       $('login-code-visible').checked = false;
+      // 管理用で入り直したときは一覧から始める（前の人のマイページ #me が住所に残っていても、管理用のマイページへは入らない）
+      if (state.me.teacher && location.hash === '#me') history.replaceState({}, '', location.pathname + location.search);
       showBoard();
       await refreshBoard(true);
       if (setup && state.token === result.token) {
